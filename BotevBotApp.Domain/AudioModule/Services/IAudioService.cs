@@ -13,7 +13,7 @@ namespace BotevBotApp.Domain.AudioModule.Services
         /// </summary>
         /// <param name="channelDto"></param>
         /// <param name="request">The request string.</param>
-        public Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, CancellationToken cancellationToken = default);
+        public Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, string requester, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Appends the audio to the playlist of the voice channel.

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.4.0" />
+    <PackageReference Include="FFMpegCore" Version="4.3.0" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
   </ItemGroup>
 

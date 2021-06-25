@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
@@ -15,8 +16,8 @@ namespace BotevBotApp.Domain.AudioModule.Services
         private readonly ConcurrentDictionary<ulong, AudioClientWorker> workers = new();
 
         /// <inheritdoc/>
-        public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, CancellationToken cancellationToken = default) 
-            => await EnqueueAudioAsync(channelDto, await requestParser.ParseRequestStringAsync(request, cancellationToken), cancellationToken);
+        public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, string requester, CancellationToken cancellationToken = default) 
+            => await EnqueueAudioAsync(channelDto, await requestParser.ParseRequestStringAsync(request, requester, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
 
         /// <inheritdoc/>
         public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, AudioRequestDTO requestDto, CancellationToken cancellationToken = default)
@@ -55,7 +56,11 @@ namespace BotevBotApp.Domain.AudioModule.Services
         /// <inheritdoc/>
         public Task<IEnumerable<AudioItemDTO>> GetAudioQueueAsync(AudioVoiceChannelDTO channelDto, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            if(workers.TryGetValue(channelDto.Channel.Id, out var audioClient))
+            {
+                return Task.FromResult(audioClient.GetQueueItems());
+            }
+            return Task.FromResult(Enumerable.Empty<AudioItemDTO>());
         }
     }
 }

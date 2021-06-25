@@ -4,6 +4,10 @@ using System.Threading.Tasks;
 using Nito.AsyncEx;
 using Discord.Audio;
 using BotevBotApp.Domain.Model;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using BotevBotApp.Domain.AudioModule.DTO;
+using System.Linq;
 
 namespace BotevBotApp.Domain.AudioModule.Model
 {
@@ -54,8 +58,47 @@ namespace BotevBotApp.Domain.AudioModule.Model
         /// </summary>
         public ulong WorkerId { get; init; }
 
+
+        private AudioItemDTO _currentlyPlaying = null;
+
+        /// <summary>
+        /// Gets the currently playing item.
+        /// </summary>
+        public AudioItemDTO CurrentlyPlaying
+        {
+            get 
+            {
+                lock (_currentlyPlaying)
+                {
+                    return _currentlyPlaying; 
+                }
+            }
+            private set 
+            {
+                lock (_currentlyPlaying)
+                {
+                    _currentlyPlaying = value; 
+                }
+            }
+        }
+
+
         private readonly IAudioClient discordAudioClient;
-        private readonly AsyncProducerConsumerQueue<AudioRequest> queue;
+
+        /// <summary>
+        /// The collection used to store the requests.
+        /// </summary>
+        /// <remarks>
+        /// The collection exists so snapshoots can be taken of the internal collection, via <see cref="ConcurrentQueue{T}.GetEnumerator()"/> and <see cref="ConcurrentQueue{T}.ToArray()"/>.<br/>
+        /// Use <see cref="queue"/> for adding and removing elements instead.
+        /// </remarks>
+        private readonly ConcurrentQueue<AudioRequest> _queueInternal;
+
+        /// <summary>
+        /// Async wrapper over <see cref="_queueInternal"/>.
+        /// </summary>
+        private readonly AsyncCollection<AudioRequest> queue;
+
         private readonly CancellationTokenSource cancellationTokenSource = new();
         
         private int queueLength = 0;
@@ -73,6 +116,9 @@ namespace BotevBotApp.Domain.AudioModule.Model
         {
             WorkerId = workerId;
             this.discordAudioClient = discordAudioClient;
+
+            _queueInternal = new();
+            queue = new(_queueInternal);
 
             Func<Exception, Task> disconnectCancel = (ex) => { cancellationTokenSource.Cancel(); return Task.CompletedTask; };
             this.discordAudioClient.Disconnected += disconnectCancel;
@@ -94,7 +140,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
             Interlocked.Increment(ref queueLength);
             try
             {
-                await queue.EnqueueAsync(request, cancellationToken);
+                await queue.AddAsync(request, cancellationToken);
                 AudioEnqueued?.Invoke(this, new AudioEnqueuedEventArgs { AudioRequest = request });
             }
             catch (Exception)
@@ -140,6 +186,24 @@ namespace BotevBotApp.Domain.AudioModule.Model
         }
 
         /// <summary>
+        /// Gets the current queue information.
+        /// </summary>
+        /// <returns>An enumerable of <see cref="AudioItemDTO"/>.</returns>
+        /// <remarks>
+        /// The first item is the currently playing one.
+        /// </remarks>
+        public IEnumerable<AudioItemDTO> GetQueueItems()
+        {
+            var current = CurrentlyPlaying;
+            var items = _queueInternal.ToArray().Select(r => r.ToAudioItem()).AsEnumerable();
+            if (current is not null)
+            {
+                items = items.Prepend(current);
+            }
+            return items;
+        }
+
+        /// <summary>
         /// The worker task.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token to monitor for cancellation.</param>
@@ -150,20 +214,22 @@ namespace BotevBotApp.Domain.AudioModule.Model
             using var discordAudioStream = discordAudioClient.CreatePCMStream(AudioApplication.Music);
             while (!cancellationToken.IsCancellationRequested)
             {
-                var request = await queue.DequeueAsync(cancellationToken).ConfigureAwait(false);
+                var request = await queue.TakeAsync(cancellationToken).ConfigureAwait(false);
                 Interlocked.Decrement(ref queueLength);
 
                 using var cancelCurrentSong = new CancellationTokenSource();
-                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cancelCurrentSong.Token);
-                var linkedToken = linkedCts.Token;
+                using var mainAndCancelCurrentSongLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cancelCurrentSong.Token);
+                var linkedToken = mainAndCancelCurrentSongLinkedCts.Token;
 
                 async void skipSongs(object sender, SkipSongRequestEventArgs eventArgs)
                 {
+                    using var maxSkipExecutionTimeCts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+                    using var mainAndmaxSkipExecutionCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, maxSkipExecutionTimeCts.Token);
                     try
                     {
                         for (int skipped = 0; skipped < eventArgs.SongsToSkip - 1; skipped++)
                         {
-                            var request = await queue.DequeueAsync(cancellationToken).ConfigureAwait(false);
+                            var request = await queue.TakeAsync(mainAndmaxSkipExecutionCts.Token).ConfigureAwait(false);
                             AudioSkipped?.Invoke(this, new AudioSkippedEventArgs { AudioRequest = request });
                         }
                     }
@@ -177,6 +243,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
                 SkipSongRequest += skipSongs;
                 try
                 {
+                    CurrentlyPlaying = request.ToAudioItem();
                     var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
 
                     _ = playback.StartAsync(linkedToken);
@@ -191,6 +258,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
                 }
                 finally
                 {
+                    CurrentlyPlaying = null;
                     SkipSongRequest -= skipSongs;
                     AudioStoppedPlaying?.Invoke(this, new AudioStoppedPlayingEventArgs { AudioRequest = request });
                 }

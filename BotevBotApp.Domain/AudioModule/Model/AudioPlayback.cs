@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using BotevBotApp.Domain.Model;
+using FFMpegCore;
+using FFMpegCore.Pipes;
 
 namespace BotevBotApp.Domain.AudioModule.Model
 {
@@ -77,6 +79,31 @@ namespace BotevBotApp.Domain.AudioModule.Model
         internal override CachedAudioPlayback WithCache()
         {
             return this;
+        }
+    }
+
+    internal class DecodingAudioPlayback : AudioPlayback
+    {
+        private readonly Stream encodedStream;
+
+        public DecodingAudioPlayback(Stream encodedStream)
+        {
+            this.encodedStream = encodedStream;
+        }
+
+        public override async Task StartAsync(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await FFMpegArguments
+                .FromPipeInput(new StreamPipeSource(encodedStream))
+                .OutputToPipe(new StreamPipeSink(AudioOutputStream), options => options
+                    .DisableChannel(FFMpegCore.Enums.Channel.Video)
+                    .WithAudioSamplingRate(48000)
+                    .WithCustomArgument("-ac 2")
+                    .ForceFormat("s16le")
+                )
+                .ProcessAsynchronously()
+                .ConfigureAwait(false);
         }
     }
 }

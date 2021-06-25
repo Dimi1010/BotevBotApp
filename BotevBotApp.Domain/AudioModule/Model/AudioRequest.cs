@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BotevBotApp.Domain.AudioModule.DTO;
 using BotevBotApp.Domain.Model;
+using FileStorageProviders;
 
 namespace BotevBotApp.Domain.AudioModule.Model
 {
@@ -24,5 +25,23 @@ namespace BotevBotApp.Domain.AudioModule.Model
         /// </summary>
         /// <returns>An audio item dto.</returns>
         public abstract AudioItemDTO ToAudioItem();
+    }
+
+    internal class StoredAudioRequest : AudioRequest
+    {
+        private readonly IFileStorageProvider storageProvider;
+        private readonly long fileId;
+
+        public override async Task<AudioPlayback> GetAudioPlaybackAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var result = await storageProvider.GetFileDataAsync(fileId);
+            return new DecodingAudioPlayback(result).WithCache();
+        }
+
+        public override AudioItemDTO ToAudioItem()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

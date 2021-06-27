@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Playback
 {
+    /// <summary>
+    /// Audio playback that gets decoded using FFMpeg.
+    /// </summary>
     internal class DecodingAudioPlayback : AudioPlayback
     {
         private readonly Stream encodedStream;
@@ -15,6 +18,7 @@ namespace BotevBotApp.AudioModule.Playback
             this.encodedStream = encodedStream;
         }
 
+        /// <inheritdoc/>
         public override async Task StartAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

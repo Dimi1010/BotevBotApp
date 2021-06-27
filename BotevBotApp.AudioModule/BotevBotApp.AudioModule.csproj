@@ -9,5 +9,6 @@
     <PackageReference Include="FFMpegCore" Version="4.3.0" />
     <PackageReference Include="FileStorageProviders" Version="0.1.1" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
+    <PackageReference Include="VideoLibrary" Version="3.1.2" />
   </ItemGroup>
 </Project>

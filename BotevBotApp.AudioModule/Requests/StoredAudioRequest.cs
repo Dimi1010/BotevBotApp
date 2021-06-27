@@ -20,7 +20,7 @@ namespace BotevBotApp.AudioModule.Requests
         public override async Task<AudioPlayback> GetAudioPlaybackAsync(CancellationToken cancellationToken = default)
         {
             var result = await storageProvider.GetFileDataAsync(fileId, cancellationToken).ConfigureAwait(false);
-            return new DecodingAudioPlayback(result);
+            return new StreamSourceAudioPlayback(result).WithDecoding();
         }
 
         public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)

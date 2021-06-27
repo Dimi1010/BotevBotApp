@@ -24,10 +24,13 @@ namespace BotevBotApp.AudioModule.Playback
         /// <summary>
         /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="CachedAudioPlayback"/>.
         /// </summary>
-        /// <returns>An new <see cref="CachedAudioPlayback"/> instance made from the current instance.</returns>
-        internal virtual CachedAudioPlayback WithCache()
-        {
-            return new CachedAudioPlayback(this);
-        }
+        /// <returns>A new <see cref="CachedAudioPlayback"/> instance made from the current instance.</returns>
+        internal virtual CachedAudioPlayback WithCache() => new CachedAudioPlayback(this);
+
+        /// <summary>
+        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="DecodingAudioPlayback"/>.
+        /// </summary>
+        /// <returns>A new <see cref="DecodingAudioPlayback"/> instance made from the current instance.</returns>
+        internal virtual DecodingAudioPlayback WithDecoding() => new DecodingAudioPlayback(this);
     }
 }

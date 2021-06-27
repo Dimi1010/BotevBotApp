@@ -16,9 +16,9 @@ namespace BotevBotApp.AudioModule.Playback
         /// </summary>
         public bool Cached { get; private set; } = false;
 
-        public CachedAudioPlayback(AudioPlayback playback)
+        public CachedAudioPlayback(AudioPlayback innerPlayback)
         {
-            innerPlayback = playback;
+            this.innerPlayback = innerPlayback;
             AudioOutputStream = new MemoryStream();
         }
 

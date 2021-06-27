@@ -120,13 +120,21 @@ namespace BotevBotApp.Domain.AudioModule.Model
             _queueInternal = new();
             queue = new(_queueInternal);
 
-            Func<Exception, Task> disconnectCancel = (ex) => { cancellationTokenSource.Cancel(); return Task.CompletedTask; };
-            this.discordAudioClient.Disconnected += disconnectCancel;
+            Task DisconnectCancel(Exception ex) { cancellationTokenSource.Cancel(); return Task.CompletedTask; }
+            this.discordAudioClient.Disconnected += DisconnectCancel;
 
             var token = cancellationTokenSource.Token;
-            token.Register(() => { this.discordAudioClient.Disconnected -= disconnectCancel; });
+            token.Register(() => { this.discordAudioClient.Disconnected -= DisconnectCancel; });
 
             _ = WorkAsync(token);
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            queue.CompleteAdding();
+            cancellationTokenSource.Cancel();
+            // Should the cts be disposed?
         }
 
         /// <summary>
@@ -175,14 +183,6 @@ namespace BotevBotApp.Domain.AudioModule.Model
             var toSkip = Interlocked.Exchange(ref queueLength, 0);
             SkipSongRequest?.Invoke(this, new SkipSongRequestEventArgs { SongsToSkip = toSkip });
             return Task.CompletedTask;
-        }
-        
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            queue.CompleteAdding();
-            cancellationTokenSource.Cancel();
-            // Should the cts be disposed?
         }
 
         /// <summary>

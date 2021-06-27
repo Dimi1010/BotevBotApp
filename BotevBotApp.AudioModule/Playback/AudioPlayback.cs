@@ -28,9 +28,16 @@ namespace BotevBotApp.AudioModule.Playback
         public virtual CachedAudioPlayback WithCache() => new CachedAudioPlayback(this);
 
         /// <summary>
-        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="DecodingAudioPlayback"/>.
+        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="DecodingAudioPlayback"/> with default options.
         /// </summary>
         /// <returns>A new <see cref="DecodingAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual DecodingAudioPlayback WithDecoding(DecodingAudioPlaybackOptions options = default) => new DecodingAudioPlayback(this, options);
+        public virtual DecodingAudioPlayback WithDecoding() => WithDecoding(DecodingAudioPlaybackOptions.Default);
+
+        /// <summary>
+        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="DecodingAudioPlayback"/>.
+        /// </summary>
+        /// <param name="options">Options with which to construct <see cref="DecodingAudioPlayback"/>.</param>
+        /// <returns>A new <see cref="DecodingAudioPlayback"/> instance made from the current instance.</returns>
+        public virtual DecodingAudioPlayback WithDecoding(DecodingAudioPlaybackOptions options) => new DecodingAudioPlayback(this, options);
     }
 }

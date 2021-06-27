@@ -14,7 +14,9 @@ namespace BotevBotApp.AudioModule.Playback
         private readonly AudioPlayback innerPlayback;
         private readonly DecodingAudioPlaybackOptions options;
 
-        public DecodingAudioPlayback(AudioPlayback innerPlayback, DecodingAudioPlaybackOptions options = default)
+        public DecodingAudioPlayback(AudioPlayback innerPlayback) : this(innerPlayback, DecodingAudioPlaybackOptions.Default) { }
+
+        public DecodingAudioPlayback(AudioPlayback innerPlayback, DecodingAudioPlaybackOptions options)
         {
             this.innerPlayback = innerPlayback;
             this.options = options;
@@ -35,6 +37,8 @@ namespace BotevBotApp.AudioModule.Playback
 
     public class DecodingAudioPlaybackOptions
     {
+        public static DecodingAudioPlaybackOptions Default => new DecodingAudioPlaybackOptions();
+
         public static Action<FFMpegArgumentOptions> DefaultOutputArgumentOptions
         {
             get

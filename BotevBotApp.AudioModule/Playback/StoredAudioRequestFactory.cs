@@ -1,6 +1,6 @@
 ﻿using FileStorageProviders;
 
-namespace BotevBotApp.AudioModule.Model
+namespace BotevBotApp.AudioModule.Playback
 {
     internal class StoredAudioRequestFactory
     {

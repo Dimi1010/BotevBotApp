@@ -1,5 +1,5 @@
 ﻿using BotevBotApp.AudioModule.DTO;
-using BotevBotApp.AudioModule.Model;
+using BotevBotApp.AudioModule.Playback;
 using System;
 using System.Collections.Generic;
 using System.Threading;

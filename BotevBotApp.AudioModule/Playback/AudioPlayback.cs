@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.AudioModule.Model
+namespace BotevBotApp.AudioModule.Playback
 {
     public abstract class AudioPlayback
     {

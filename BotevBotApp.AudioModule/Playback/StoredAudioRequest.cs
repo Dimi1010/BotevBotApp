@@ -3,7 +3,7 @@ using FileStorageProviders;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.AudioModule.Model
+namespace BotevBotApp.AudioModule.Playback
 {
     internal class StoredAudioRequest : AudioRequest
     {

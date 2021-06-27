@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.AudioModule.Model
+namespace BotevBotApp.AudioModule.Playback
 {
     internal class AudioClientQueueChangedEventArgs : EventArgs
     {

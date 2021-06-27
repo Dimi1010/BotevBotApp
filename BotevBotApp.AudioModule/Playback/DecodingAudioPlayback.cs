@@ -9,7 +9,7 @@ namespace BotevBotApp.AudioModule.Playback
     /// <summary>
     /// Audio playback that gets decoded using FFMpeg.
     /// </summary>
-    internal class DecodingAudioPlayback : AudioPlayback
+    public class DecodingAudioPlayback : AudioPlayback
     {
         private readonly AudioPlayback innerPlayback;
         private readonly DecodingAudioPlaybackOptions options;
@@ -33,7 +33,7 @@ namespace BotevBotApp.AudioModule.Playback
         }
     }
 
-    internal class DecodingAudioPlaybackOptions
+    public class DecodingAudioPlaybackOptions
     {
         public static Action<FFMpegArgumentOptions> DefaultOutputArgumentOptions
         {

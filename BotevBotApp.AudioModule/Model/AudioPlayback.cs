@@ -1,8 +1,8 @@
-﻿using System.IO;
+﻿using FFMpegCore;
+using FFMpegCore.Pipes;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using FFMpegCore;
-using FFMpegCore.Pipes;
 
 namespace BotevBotApp.AudioModule.Model
 {

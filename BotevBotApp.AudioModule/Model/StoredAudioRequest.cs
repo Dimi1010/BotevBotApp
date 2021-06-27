@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using BotevBotApp.AudioModule.DTO;
+﻿using BotevBotApp.AudioModule.DTO;
 using FileStorageProviders;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Model
 {

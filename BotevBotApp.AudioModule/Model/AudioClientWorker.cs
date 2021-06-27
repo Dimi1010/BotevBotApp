@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Nito.AsyncEx;
+﻿using BotevBotApp.AudioModule.DTO;
 using Discord.Audio;
+using Nito.AsyncEx;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using BotevBotApp.AudioModule.DTO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Model
 {

@@ -19,8 +19,8 @@ namespace BotevBotApp.Domain.AudioModule.Services
         }
 
         /// <inheritdoc/>
-        public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, string requester, CancellationToken cancellationToken = default) 
-            => await EnqueueAudioAsync(channelDto, await requestParser.ParseRequestStringAsync(request, requester, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+        public Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, string requester, CancellationToken cancellationToken = default)
+            => EnqueueAudioAsync(channelDto, new AudioRequestDTO { Request = request, Requester = requester }, cancellationToken);
 
         /// <inheritdoc/>
         public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, AudioRequestDTO requestDto, CancellationToken cancellationToken = default)

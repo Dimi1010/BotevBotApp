@@ -22,9 +22,14 @@ namespace BotevBotApp.Domain.AudioModule.Model
             return new DecodingAudioPlayback(result);
         }
 
-        public override AudioItemDTO ToAudioItem()
+        public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            var metadata = await storageProvider.GetFileMetadataAsync(fileId, cancellationToken);
+            return new AudioItemDTO {
+                Name = metadata.Filename,
+                Requester = Requester,
+                Source = typeof(StoredAudioRequest).Name,
+            };
         }
     }
 }

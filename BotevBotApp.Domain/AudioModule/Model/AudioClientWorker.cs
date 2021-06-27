@@ -195,7 +195,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
         public IEnumerable<AudioItemDTO> GetQueueItems()
         {
             var current = CurrentlyPlaying;
-            var items = _queueInternal.ToArray().Select(r => r.ToAudioItem()).AsEnumerable();
+            var items = _queueInternal.ToArray().Select(r => r.ToAudioItemAsync()).AsEnumerable();
             if (current is not null)
             {
                 items = items.Prepend(current);
@@ -243,7 +243,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
                 SkipSongRequest += skipSongs;
                 try
                 {
-                    CurrentlyPlaying = request.ToAudioItem();
+                    CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken);
                     var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
 
                     _ = playback.StartAsync(linkedToken);

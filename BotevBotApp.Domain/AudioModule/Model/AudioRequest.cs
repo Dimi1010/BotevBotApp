@@ -39,7 +39,8 @@ namespace BotevBotApp.Domain.AudioModule.Model
         /// <summary>
         /// Gets an audio item dto that describes the request.
         /// </summary>
-        /// <returns>An audio item dto.</returns>
-        public abstract AudioItemDTO ToAudioItem();
+        /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is System.Threading.CancellationToken.None.</param>
+        /// <returns>A task that returns the <see cref="AudioRequestDTO"/>.</returns>
+        public abstract Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default);
     }
 }

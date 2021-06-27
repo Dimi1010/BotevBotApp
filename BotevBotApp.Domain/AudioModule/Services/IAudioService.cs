@@ -1,5 +1,4 @@
-﻿using Discord;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BotevBotApp.Domain.AudioModule.DTO;
 using System.Threading;

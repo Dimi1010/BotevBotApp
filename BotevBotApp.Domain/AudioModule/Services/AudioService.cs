@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Discord;
 using BotevBotApp.Domain.AudioModule.DTO;
 using BotevBotApp.Domain.AudioModule.Model;
 using System.Collections.Concurrent;
@@ -14,6 +12,11 @@ namespace BotevBotApp.Domain.AudioModule.Services
     {
         private readonly IRequestParserService requestParser;
         private readonly ConcurrentDictionary<ulong, AudioClientWorker> workers = new();
+
+        public AudioService(IRequestParserService requestParser)
+        {
+            this.requestParser = requestParser;
+        }
 
         /// <inheritdoc/>
         public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, string requester, CancellationToken cancellationToken = default) 

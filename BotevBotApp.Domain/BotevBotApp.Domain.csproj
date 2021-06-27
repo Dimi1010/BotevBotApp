@@ -3,17 +3,5 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.4.0" />
-    <PackageReference Include="FFMpegCore" Version="4.3.0" />
-    <PackageReference Include="FileStorageProviders" Version="0.1.1" />
-    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
+  
 </Project>

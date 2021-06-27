@@ -188,14 +188,19 @@ namespace BotevBotApp.Domain.AudioModule.Model
         /// <summary>
         /// Gets the current queue information.
         /// </summary>
-        /// <returns>An enumerable of <see cref="AudioItemDTO"/>.</returns>
+        /// <param name="cancellationToken">The cancellation token to monitor for cancellation.</param>
+        /// <returns>A task returning an enumerable of <see cref="AudioItemDTO"/>.</returns>
         /// <remarks>
         /// The first item is the currently playing one.
         /// </remarks>
-        public IEnumerable<AudioItemDTO> GetQueueItems()
+        public async Task<IEnumerable<AudioItemDTO>> GetQueueItemsAsync(CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var current = CurrentlyPlaying;
-            var items = _queueInternal.ToArray().Select(r => r.ToAudioItemAsync()).AsEnumerable();
+
+            var queueRequests = _queueInternal.ToArray();
+            var items = (await Task.WhenAll(queueRequests.Select(r => r.ToAudioItemAsync(cancellationToken)))).AsEnumerable();
+
             if (current is not null)
             {
                 items = items.Prepend(current);

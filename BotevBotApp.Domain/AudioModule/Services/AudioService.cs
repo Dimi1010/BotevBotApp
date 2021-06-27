@@ -61,7 +61,7 @@ namespace BotevBotApp.Domain.AudioModule.Services
         {
             if(workers.TryGetValue(channelDto.Channel.Id, out var audioClient))
             {
-                return Task.FromResult(audioClient.GetQueueItems());
+                return audioClient.GetQueueItemsAsync(cancellationToken);
             }
             return Task.FromResult(Enumerable.Empty<AudioItemDTO>());
         }

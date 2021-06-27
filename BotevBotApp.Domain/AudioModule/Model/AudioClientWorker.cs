@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
 using Discord.Audio;
-using BotevBotApp.Domain.Model;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using BotevBotApp.Domain.AudioModule.DTO;
@@ -31,7 +30,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
     internal class AudioSkippedEventArgs : AudioClientQueueChangedEventArgs
     { }
 
-    internal sealed class AudioClientWorker : DomainObject, IDisposable
+    internal sealed class AudioClientWorker : IDisposable
     {
         /// <summary>
         /// Fires when an <see cref="AudioRequest"/> is enqueued.

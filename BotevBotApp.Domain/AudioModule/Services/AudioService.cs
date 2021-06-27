@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace BotevBotApp.Domain.AudioModule.Services
 {
-    internal class AudioService : IAudioService
+    public class AudioService : IAudioService
     {
         private readonly IRequestParserService requestParser;
         private readonly ConcurrentDictionary<ulong, AudioClientWorker> workers = new();

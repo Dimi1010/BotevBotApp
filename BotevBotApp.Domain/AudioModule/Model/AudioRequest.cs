@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using BotevBotApp.Domain.AudioModule.DTO;
-using BotevBotApp.Domain.Model;
 
 namespace BotevBotApp.Domain.AudioModule.Model
 {
-    internal abstract class AudioRequest : DomainObject
+    public abstract class AudioRequest
     {
         /// <summary>
         /// Gets the name of the requester.

@@ -19,13 +19,14 @@ namespace BotevBotApp.Domain.AudioModule.Services
         /// </summary>
         /// <param name="requestDto">The request dto to be parsed.</param>
         /// <returns>An audio request.</returns>
-        internal Task<AudioRequest> ParseRequestAsync(AudioRequestDTO requestDto, CancellationToken cancellationToken = default);
+        public Task<AudioRequest> ParseRequestAsync(AudioRequestDTO requestDto, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Parses a request string directly into an <see cref="AudioRequest"/>.
         /// </summary>
         /// <param name="request">The request string.</param>
         /// <returns>The parsed request.</returns>
-        internal async Task<AudioRequest> ParseRequestAsync(string request, string requester, CancellationToken cancellationToken = default) => await ParseRequestAsync(await ParseRequestStringAsync(request, requester, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
+        public async Task<AudioRequest> ParseRequestAsync(string request, string requester, CancellationToken cancellationToken = default) 
+            => await ParseRequestAsync(await ParseRequestStringAsync(request, requester, cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
     }
 }

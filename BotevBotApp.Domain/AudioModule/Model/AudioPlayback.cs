@@ -1,13 +1,12 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using BotevBotApp.Domain.Model;
 using FFMpegCore;
 using FFMpegCore.Pipes;
 
 namespace BotevBotApp.Domain.AudioModule.Model
 {
-    internal abstract class AudioPlayback : DomainObject
+    public abstract class AudioPlayback
     {
         /// <summary>
         /// Gets the stream on which the playback will be outputted.

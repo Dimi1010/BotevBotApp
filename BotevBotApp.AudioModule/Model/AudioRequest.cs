@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using BotevBotApp.Domain.AudioModule.DTO;
+using BotevBotApp.AudioModule.DTO;
 
-namespace BotevBotApp.Domain.AudioModule.Model
+namespace BotevBotApp.AudioModule.Model
 {
     public abstract class AudioRequest
     {

@@ -1,7 +1,7 @@
 ﻿using Discord;
 using Discord.Audio;
 
-namespace BotevBotApp.Domain.AudioModule.DTO
+namespace BotevBotApp.AudioModule.DTO
 {
     public record AudioVoiceChannelDTO
     {

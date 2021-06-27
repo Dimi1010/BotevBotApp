@@ -5,10 +5,10 @@ using Nito.AsyncEx;
 using Discord.Audio;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using BotevBotApp.Domain.AudioModule.DTO;
+using BotevBotApp.AudioModule.DTO;
 using System.Linq;
 
-namespace BotevBotApp.Domain.AudioModule.Model
+namespace BotevBotApp.AudioModule.Model
 {
     internal class AudioClientQueueChangedEventArgs : EventArgs
     {

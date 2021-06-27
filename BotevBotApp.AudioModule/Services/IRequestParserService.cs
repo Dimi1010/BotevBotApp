@@ -1,9 +1,9 @@
-﻿using BotevBotApp.Domain.AudioModule.DTO;
-using BotevBotApp.Domain.AudioModule.Model;
+﻿using BotevBotApp.AudioModule.DTO;
+using BotevBotApp.AudioModule.Model;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.Domain.AudioModule.Services
+namespace BotevBotApp.AudioModule.Services
 {
     public interface IRequestParserService
     {

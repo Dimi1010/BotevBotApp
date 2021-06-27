@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using BotevBotApp.Domain.AudioModule.DTO;
-using BotevBotApp.Domain.AudioModule.Model;
+using BotevBotApp.AudioModule.DTO;
+using BotevBotApp.AudioModule.Model;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace BotevBotApp.Domain.AudioModule.Services
+namespace BotevBotApp.AudioModule.Services
 {
     public class AudioService : IAudioService
     {

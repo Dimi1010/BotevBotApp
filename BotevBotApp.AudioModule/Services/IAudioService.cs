@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BotevBotApp.Domain.AudioModule.DTO;
+using BotevBotApp.AudioModule.DTO;
 using System.Threading;
 
-namespace BotevBotApp.Domain.AudioModule.Services
+namespace BotevBotApp.AudioModule.Services
 {
     public interface IAudioService
     {

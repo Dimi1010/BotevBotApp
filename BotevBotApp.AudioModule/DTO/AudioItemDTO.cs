@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.Domain.AudioModule.DTO
+namespace BotevBotApp.AudioModule.DTO
 {
     public record AudioItemDTO
     {

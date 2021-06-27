@@ -1,9 +1,10 @@
 ﻿using BotevBotApp.AudioModule.DTO;
+using BotevBotApp.AudioModule.Playback;
 using FileStorageProviders;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.AudioModule.Playback
+namespace BotevBotApp.AudioModule.Requests
 {
     internal class StoredAudioRequest : AudioRequest
     {
@@ -25,7 +26,8 @@ namespace BotevBotApp.AudioModule.Playback
         public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)
         {
             var metadata = await storageProvider.GetFileMetadataAsync(fileId, cancellationToken).ConfigureAwait(false);
-            return new AudioItemDTO {
+            return new AudioItemDTO
+            {
                 Name = metadata.Filename,
                 Requester = Requester,
                 Source = typeof(StoredAudioRequest).Name,

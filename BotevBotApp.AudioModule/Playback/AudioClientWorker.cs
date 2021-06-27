@@ -1,4 +1,5 @@
 ﻿using BotevBotApp.AudioModule.DTO;
+using BotevBotApp.AudioModule.Requests;
 using Discord.Audio;
 using Nito.AsyncEx;
 using System;

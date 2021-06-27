@@ -29,7 +29,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
         /// <param name="cachePlayback">Determines if the returned <see cref="AudioPlayback"/> should have caching enabled.</param>
         /// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is System.Threading.CancellationToken.None.</param>
         /// <returns>A task representing the fetching operation.</returns>
-        public async Task<AudioPlayback> GetAudioPlaybackAsync(bool cachePlayback = false, CancellationToken cancellationToken = default)
+        public async Task<AudioPlayback> GetAudioPlaybackAsync(bool cachePlayback, CancellationToken cancellationToken = default)
         {
             var playback = await GetAudioPlaybackAsync(cancellationToken);
             return cachePlayback ? playback.WithCache() : playback;

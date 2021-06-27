@@ -39,7 +39,7 @@ namespace BotevBotApp.Domain.AudioModule.Services
         {
             if (workers.TryGetValue(channelDto.Channel.Id, out var clientWorker))
             {
-                await clientWorker.SkipAsync(count, cancellationToken);
+                await clientWorker.SkipAsync(count, cancellationToken).ConfigureAwait(false);
             }
 
             return AudioServiceResult.Success;

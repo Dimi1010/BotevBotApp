@@ -61,7 +61,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
             }
             else
             {
-                var innerStart = innerPlayback.StartAsync(cancellationToken);
+                var innerStart = innerPlayback.StartAsync(cancellationToken).ConfigureAwait(false);
                 await innerPlayback.AudioOutputStream.CopyToAsync(AudioOutputStream, cancellationToken).ConfigureAwait(false);
                 await innerStart;
                 Cached = true;

@@ -18,13 +18,13 @@ namespace BotevBotApp.Domain.AudioModule.Model
 
         public override async Task<AudioPlayback> GetAudioPlaybackAsync(CancellationToken cancellationToken = default)
         {
-            var result = await storageProvider.GetFileDataAsync(fileId, cancellationToken);
+            var result = await storageProvider.GetFileDataAsync(fileId, cancellationToken).ConfigureAwait(false);
             return new DecodingAudioPlayback(result);
         }
 
         public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)
         {
-            var metadata = await storageProvider.GetFileMetadataAsync(fileId, cancellationToken);
+            var metadata = await storageProvider.GetFileMetadataAsync(fileId, cancellationToken).ConfigureAwait(false);
             return new AudioItemDTO {
                 Name = metadata.Filename,
                 Requester = Requester,

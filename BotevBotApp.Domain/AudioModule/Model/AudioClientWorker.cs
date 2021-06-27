@@ -147,7 +147,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
             Interlocked.Increment(ref queueLength);
             try
             {
-                await queue.AddAsync(request, cancellationToken);
+                await queue.AddAsync(request, cancellationToken).ConfigureAwait(false);
                 AudioEnqueued?.Invoke(this, new AudioEnqueuedEventArgs { AudioRequest = request });
             }
             catch (Exception)
@@ -198,7 +198,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
             var current = CurrentlyPlaying;
 
             var queueRequests = _queueInternal.ToArray();
-            var items = (await Task.WhenAll(queueRequests.Select(r => r.ToAudioItemAsync(cancellationToken)))).AsEnumerable();
+            var items = (await Task.WhenAll(queueRequests.Select(r => r.ToAudioItemAsync(cancellationToken))).ConfigureAwait(false)).AsEnumerable();
 
             if (current is not null)
             {

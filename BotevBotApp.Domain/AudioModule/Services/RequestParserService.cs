@@ -24,7 +24,7 @@ namespace BotevBotApp.Domain.AudioModule.Services
             {
                 try
                 {
-                    return await parser.ParseRequestAsync(requestDto, cancellationToken);
+                    return await parser.ParseRequestAsync(requestDto, cancellationToken).ConfigureAwait(false);
                 }
                 catch(RequestParseException)
                 {

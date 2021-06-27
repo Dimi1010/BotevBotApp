@@ -31,7 +31,7 @@ namespace BotevBotApp.Domain.AudioModule.Model
         /// <returns>A task representing the fetching operation.</returns>
         public async Task<AudioPlayback> GetAudioPlaybackAsync(bool cachePlayback, CancellationToken cancellationToken = default)
         {
-            var playback = await GetAudioPlaybackAsync(cancellationToken);
+            var playback = await GetAudioPlaybackAsync(cancellationToken).ConfigureAwait(false);
             return cachePlayback ? playback.WithCache() : playback;
         }
 

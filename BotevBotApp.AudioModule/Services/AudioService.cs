@@ -11,11 +11,13 @@ namespace BotevBotApp.AudioModule.Services
     public class AudioService : IAudioService
     {
         private readonly IRequestParserService requestParser;
-        private readonly ConcurrentDictionary<ulong, AudioClientWorker> workers = new();
+        private readonly IAudioClientWorkerFactory audioClientWorkerFactory;
+        private readonly ConcurrentDictionary<ulong, IAudioClientWorker> workers = new();
 
-        public AudioService(IRequestParserService requestParser)
+        public AudioService(IRequestParserService requestParser, IAudioClientWorkerFactory audioClientWorkerFactory)
         {
             this.requestParser = requestParser;
+            this.audioClientWorkerFactory = audioClientWorkerFactory;
         }
 
         /// <inheritdoc/>
@@ -25,7 +27,7 @@ namespace BotevBotApp.AudioModule.Services
         /// <inheritdoc/>
         public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, AudioRequestDTO requestDto, CancellationToken cancellationToken = default)
         {
-            var client = workers.GetOrAdd(channelDto.Channel.Id, (id) => new AudioClientWorker(id, channelDto.AudioClient));
+            var client = workers.GetOrAdd(channelDto.Channel.Id, (id) => audioClientWorkerFactory.CreateAudioClientWorker(id, channelDto));
 
             var request = await requestParser.ParseRequestAsync(requestDto, cancellationToken).ConfigureAwait(false);
 

@@ -11,51 +11,21 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Playback
 {
-    internal class AudioClientQueueChangedEventArgs : EventArgs
+    public sealed class AudioClientWorker : IDisposable, IAudioClientWorker
     {
-        /// <summary>
-        /// The audio request assosiated with the event.
-        /// </summary>
-        public AudioRequest AudioRequest { get; init; }
-    }
-
-    internal class AudioEnqueuedEventArgs : AudioClientQueueChangedEventArgs
-    { }
-
-    internal class AudioStartedPlayingEventArgs : AudioClientQueueChangedEventArgs
-    { }
-
-    internal class AudioStoppedPlayingEventArgs : AudioClientQueueChangedEventArgs
-    { }
-
-    internal class AudioSkippedEventArgs : AudioClientQueueChangedEventArgs
-    { }
-
-    internal sealed class AudioClientWorker : IDisposable
-    {
-        /// <summary>
-        /// Fires when an <see cref="AudioRequest"/> is enqueued.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<AudioEnqueuedEventArgs> AudioEnqueued;
 
-        /// <summary>
-        /// Fires when an <see cref="AudioRequest"/> is skipped.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<AudioSkippedEventArgs> AudioSkipped;
 
-        /// <summary>
-        /// Fires when an <see cref="AudioRequest"/> starts playing.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<AudioStartedPlayingEventArgs> AudioStartedPlaying;
 
-        /// <summary>
-        /// Fires when an <see cref="AudioRequest"/> finishes playing.
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler<AudioStoppedPlayingEventArgs> AudioStoppedPlaying;
 
-        /// <summary>
-        /// Gets the worker id assosiated with the worker.
-        /// </summary>
+        /// <inheritdoc/>
         public ulong WorkerId { get; init; }
 
 
@@ -66,18 +36,18 @@ namespace BotevBotApp.AudioModule.Playback
         /// </summary>
         public AudioItemDTO CurrentlyPlaying
         {
-            get 
+            get
             {
                 lock (_currentlyPlaying)
                 {
-                    return _currentlyPlaying; 
+                    return _currentlyPlaying;
                 }
             }
-            private set 
+            private set
             {
                 lock (_currentlyPlaying)
                 {
-                    _currentlyPlaying = value; 
+                    _currentlyPlaying = value;
                 }
             }
         }
@@ -100,7 +70,7 @@ namespace BotevBotApp.AudioModule.Playback
         private readonly AsyncCollection<AudioRequest> queue;
 
         private readonly CancellationTokenSource cancellationTokenSource = new();
-        
+
         private int queueLength = 0;
 
         private class SkipSongRequestEventArgs : EventArgs
@@ -137,12 +107,7 @@ namespace BotevBotApp.AudioModule.Playback
             // Should the cts be disposed?
         }
 
-        /// <summary>
-        /// Enqueues a new <see cref="AudioRequest"/> to the client queue.
-        /// </summary>
-        /// <param name="request">The audio request.</param>
-        /// <param name="cancellationToken">The cancellation token to monitor for cancellation. Defaults to <see cref="CancellationToken.None"/></param>
-        /// <returns>A task representing the enqueueing operation.</returns>
+        /// <inheritdoc/>
         public async Task EnqueueAsync(AudioRequest request, CancellationToken cancellationToken = default)
         {
             Interlocked.Increment(ref queueLength);
@@ -158,12 +123,7 @@ namespace BotevBotApp.AudioModule.Playback
             }
         }
 
-        /// <summary>
-        /// Skips the number of songs in the queue.
-        /// </summary>
-        /// <param name="songsToSkip">The number of songs to skip.</param>
-        /// <param name="cancellationToken">The cancellation token to monitor for cancellation. Defaults to <see cref="CancellationToken.None"/></param>
-        /// <returns>A task representing the skip operation.</returns>
+        /// <inheritdoc/>
         public Task SkipAsync(int songsToSkip, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -172,11 +132,7 @@ namespace BotevBotApp.AudioModule.Playback
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Clears the audio queue.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token to monitor for cancellation. Defaults to <see cref="CancellationToken.None"/></param>
-        /// <returns>A task representing the clear operation.</returns>
+        /// <inheritdoc/>
         public Task ClearAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -185,14 +141,7 @@ namespace BotevBotApp.AudioModule.Playback
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Gets the current queue information.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token to monitor for cancellation.</param>
-        /// <returns>A task returning an enumerable of <see cref="AudioItemDTO"/>.</returns>
-        /// <remarks>
-        /// The first item is the currently playing one.
-        /// </remarks>
+        /// <inheritdoc/>
         public async Task<IEnumerable<AudioItemDTO>> GetQueueItemsAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

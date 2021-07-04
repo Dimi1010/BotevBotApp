@@ -10,14 +10,15 @@ namespace BotevBotApp.AudioModule.Requests
 {
     public class YoutubeAudioRequest : RemoteAudioRequest
     {
+        public const string ExpectedHost = "www.youtube.com";
+
         public YoutubeAudioRequest(string requester, Uri url) : base(requester, url)
         {
         }
 
         protected override bool ValidateUrl(Uri url)
         {
-            // TODO: Add Validation.
-            return base.ValidateUrl(url);
+            return url.Host == ExpectedHost;
         }
 
         public override async Task<AudioPlayback> GetAudioPlaybackAsync(CancellationToken cancellationToken = default)
@@ -42,7 +43,7 @@ namespace BotevBotApp.AudioModule.Requests
         {
             var youtube = YouTube.Default;
             var video = await youtube.GetVideoAsync(Url.ToString()).ConfigureAwait(false);
-            return new AudioItemDTO { Requester = Requester, Name = video.FullName, Source = "YouTube" };
+            return new AudioItemDTO { Requester = Requester, Name = video.Title, Source = "YouTube" };
         }
     }
 }

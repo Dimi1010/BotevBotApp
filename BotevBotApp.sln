@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp.Domain", "BotevBotApp.Domain\BotevBotApp.Domain.csproj", "{A7B4671C-CEB7-4E0A-8C8F-F3595704BF13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotevBotApp.AudioModule", "BotevBotApp.AudioModule\BotevBotApp.AudioModule.csproj", "{850381AF-ADAA-4383-8254-2B70DFA91B76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp.AudioModule", "BotevBotApp.AudioModule\BotevBotApp.AudioModule.csproj", "{850381AF-ADAA-4383-8254-2B70DFA91B76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotevBotApp.AudioModuleTests", "BotevBotApp.AudioModuleTests\BotevBotApp.AudioModuleTests.csproj", "{907513AB-204B-41A4-8A29-8E6A471DFE61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

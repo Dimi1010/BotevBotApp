@@ -1,6 +1,7 @@
 ﻿using FFMpegCore;
 using FFMpegCore.Pipes;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +26,7 @@ namespace BotevBotApp.AudioModule.Playback
         /// <inheritdoc/>
         public override async Task StartAsync(CancellationToken cancellationToken = default)
         {
+            AudioOutputStream = new MemoryStream();
             cancellationToken.ThrowIfCancellationRequested();
             await innerPlayback.StartAsync(cancellationToken).ConfigureAwait(false);
             await FFMpegArguments

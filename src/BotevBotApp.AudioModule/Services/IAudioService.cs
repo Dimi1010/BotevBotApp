@@ -1,4 +1,5 @@
 ﻿using BotevBotApp.AudioModule.DTO;
+using Discord;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,23 +26,23 @@ namespace BotevBotApp.AudioModule.Services
         /// <summary>
         /// Skips the requested number of songs from the queue.
         /// </summary>
-        /// <param name="channel">The channel in which the skip is performed.</param>
+        /// <param name="voiceChannel">The channel in which the skip is performed.</param>
         /// <param name="count">The requested number of skips.</param>
         /// <returns></returns>
-        public Task<AudioServiceResult> SkipAudioAsync(AudioVoiceChannelDTO channelDto, int count = 1, CancellationToken cancellationToken = default);
+        public Task<AudioServiceResult> SkipAudioAsync(IVoiceChannel voiceChannel, int count = 1, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Stops the audio playback in the channel.
         /// </summary>
-        /// <param name="channel">The channel in which the playback is to be stopped.</param>
+        /// <param name="voiceChannel">The channel in which the playback is to be stopped.</param>
         /// <returns></returns>
-        public Task<AudioServiceResult> StopAudioAsync(AudioVoiceChannelDTO channelDto, CancellationToken cancellationToken = default);
+        public Task<AudioServiceResult> StopAudioAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the audio queue.
         /// </summary>
-        /// <param name="channel">The channel for which the audio queue is requested.</param>
+        /// <param name="voiceChannel">The channel for which the audio queue is requested.</param>
         /// <returns></returns>
-        public Task<IEnumerable<AudioItemDTO>> GetAudioQueueAsync(AudioVoiceChannelDTO channelDto, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<AudioItemDTO>> GetAudioQueueAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default);
     }
 }

@@ -204,8 +204,8 @@ namespace BotevBotApp.AudioModule.Playback
                     AudioStartedPlaying?.Invoke(this, new AudioStartedPlayingEventArgs { AudioRequest = request });
                     await using var audioStream = await playback.GetAudioStreamAsync(linkedToken).ConfigureAwait(false);
 
-                    await audioStream.CopyToAsync(discordAudioStream, linkedToken).ConfigureAwait(false);
-                    await discordAudioStream.FlushAsync(linkedToken).ConfigureAwait(false);
+                    try { await audioStream.CopyToAsync(discordAudioStream, linkedToken).ConfigureAwait(false); }
+                    finally { await discordAudioStream.FlushAsync(linkedToken).ConfigureAwait(false); }
                 }
                 catch (OperationCanceledException)
                 {

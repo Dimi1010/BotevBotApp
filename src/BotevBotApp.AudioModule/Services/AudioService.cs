@@ -1,5 +1,6 @@
 ﻿using BotevBotApp.AudioModule.DTO;
 using BotevBotApp.AudioModule.Playback;
+using Discord;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,9 +38,9 @@ namespace BotevBotApp.AudioModule.Services
         }
 
         /// <inheritdoc/>
-        public async Task<AudioServiceResult> SkipAudioAsync(AudioVoiceChannelDTO channelDto, int count = 1, CancellationToken cancellationToken = default)
+        public async Task<AudioServiceResult> SkipAudioAsync(IVoiceChannel voiceChannel, int count = 1, CancellationToken cancellationToken = default)
         {
-            if (workers.TryGetValue(channelDto.Channel.Id, out var clientWorker))
+            if (workers.TryGetValue(voiceChannel.Id, out var clientWorker))
             {
                 await clientWorker.SkipAsync(count, cancellationToken).ConfigureAwait(false);
             }
@@ -48,9 +49,9 @@ namespace BotevBotApp.AudioModule.Services
         }
 
         /// <inheritdoc/>
-        public Task<AudioServiceResult> StopAudioAsync(AudioVoiceChannelDTO channelDto, CancellationToken cancellationToken = default)
+        public Task<AudioServiceResult> StopAudioAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default)
         {
-            if (workers.TryRemove(channelDto.Channel.Id, out var clientWorker))
+            if (workers.TryRemove(voiceChannel.Id, out var clientWorker))
             {
                 clientWorker.Dispose();
             }
@@ -59,9 +60,9 @@ namespace BotevBotApp.AudioModule.Services
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<AudioItemDTO>> GetAudioQueueAsync(AudioVoiceChannelDTO channelDto, CancellationToken cancellationToken = default)
+        public Task<IEnumerable<AudioItemDTO>> GetAudioQueueAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default)
         {
-            if(workers.TryGetValue(channelDto.Channel.Id, out var audioClient))
+            if(workers.TryGetValue(voiceChannel.Id, out var audioClient))
             {
                 return audioClient.GetQueueItemsAsync(cancellationToken);
             }

@@ -34,7 +34,7 @@ namespace BotevBotApp.AudioModule.Requests
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var videoStream = await bestCandidate.StreamAsync();
+            var videoStream = await bestCandidate.StreamAsync().ConfigureAwait(false);
 
             return new StreamSourceAudioPlayback(videoStream).WithCache().WithDecoding();
         }

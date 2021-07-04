@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace BotevBotApp.AudioModule.Playback
     public sealed class CachedAudioPlayback : AudioPlayback
     {
         private readonly AudioPlayback innerPlayback;
+        private MemoryStream cachedStream = null;
 
         /// <summary>
         /// Gets weather the playback stream has been cached.
@@ -19,24 +21,72 @@ namespace BotevBotApp.AudioModule.Playback
         public CachedAudioPlayback(AudioPlayback innerPlayback)
         {
             this.innerPlayback = innerPlayback;
-            AudioOutputStream = new MemoryStream();
         }
 
         /// <inheritdoc/>
-        public override async Task StartAsync(CancellationToken cancellationToken = default)
+        public override Task<Stream> GetAudioStreamAsync(CancellationToken cancellationToken = default)
         {
+            ThrowIfDisposed();
+
             cancellationToken.ThrowIfCancellationRequested();
-            if (Cached)
+            return Cached ? GetCacheCopyAsync(cancellationToken) : GetAndCacheAudioStreamAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// Gets a copy of the cached <see cref="MemoryStream"/>.
+        /// </summary>
+        /// <param name="cancellationToken">A token to monitor for cancellation.</param>
+        /// <returns>A task representing the operation.</returns>
+        private Task<Stream> GetCacheCopyAsync(CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            cancellationToken.ThrowIfCancellationRequested();
+            var outputStream = new MemoryStream(cachedStream.Capacity);
+            cachedStream.WriteTo(outputStream);
+            return Task.FromResult<Stream>(outputStream);
+        }
+
+        /// <summary>
+        /// Processes and caches the audio stream from <see cref="innerPlayback"/> and returns a copy it.
+        /// </summary>
+        /// <param name="cancellationToken">A token to monitor for cancellation.</param>
+        /// <returns>A task representing the operation.</returns>
+        private async Task<Stream> GetAndCacheAudioStreamAsync(CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+
+            cancellationToken.ThrowIfCancellationRequested();
+            using var innerStream = await innerPlayback.GetAudioStreamAsync(cancellationToken).ConfigureAwait(false);
+            cancellationToken.ThrowIfCancellationRequested();
+            // Cancellation of the copy to cache partway will corrupt the cache.
+            cachedStream = new MemoryStream();
+            await innerStream.CopyToAsync(cachedStream, CancellationToken.None).ConfigureAwait(false);
+            Cached = true;
+            return await GetCacheCopyAsync(cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        protected override void Dispose(bool disposing)
+        {
+            if (IsDisposed) return;
+            
+            base.Dispose(disposing);
+            if (disposing)
             {
-                AudioOutputStream.Position = 0;
+                innerPlayback.Dispose();
+                cachedStream.Dispose();
             }
-            else
-            {
-                var innerStart = innerPlayback.StartAsync(cancellationToken).ConfigureAwait(false);
-                await innerPlayback.AudioOutputStream.CopyToAsync(AudioOutputStream, cancellationToken).ConfigureAwait(false);
-                await innerStart;
-                Cached = true;
-            }
+        }
+
+        /// <inheritdoc/>
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            if (IsDisposed) return;
+
+            await base.DisposeAsyncCore().ConfigureAwait(false);
+            await innerPlayback.DisposeAsync().ConfigureAwait(false);
+            await cachedStream.DisposeAsync().ConfigureAwait(false);
         }
 
         /// <summary>

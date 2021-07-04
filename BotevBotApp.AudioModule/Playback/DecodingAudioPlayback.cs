@@ -23,17 +23,39 @@ namespace BotevBotApp.AudioModule.Playback
             this.options = options;
         }
 
-        /// <inheritdoc/>
-        public override async Task StartAsync(CancellationToken cancellationToken = default)
+        public override async Task<Stream> GetAudioStreamAsync(CancellationToken cancellationToken = default)
         {
-            AudioOutputStream = new MemoryStream();
-            cancellationToken.ThrowIfCancellationRequested();
-            await innerPlayback.StartAsync(cancellationToken).ConfigureAwait(false);
+            ThrowIfDisposed();
+
+            var outputStream = new MemoryStream();
+            using var inputStream = await innerPlayback.GetAudioStreamAsync(cancellationToken);
             await FFMpegArguments
-                .FromPipeInput(new StreamPipeSource(innerPlayback.AudioOutputStream), options.InputArgumentsOptions)
-                .OutputToPipe(new StreamPipeSink(AudioOutputStream), options.OutputArgumentOptions)
+                .FromPipeInput(new StreamPipeSource(inputStream), options.InputArgumentsOptions)
+                .OutputToPipe(new StreamPipeSink(outputStream), options.OutputArgumentOptions)
                 .ProcessAsynchronously()
                 .ConfigureAwait(false);
+            return outputStream;
+        }
+
+        /// <inheritdoc/>
+        protected override void Dispose(bool disposing)
+        {
+            if (IsDisposed) return;
+
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                innerPlayback.Dispose();
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            if (IsDisposed) return;
+
+            await base.DisposeAsyncCore().ConfigureAwait(false);
+            await innerPlayback.DisposeAsync().ConfigureAwait(false);
         }
     }
 

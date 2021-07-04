@@ -96,6 +96,7 @@ namespace BotevBotApp.AudioModule.Playback
             var token = cancellationTokenSource.Token;
             token.Register(() => { this.discordAudioClient.Disconnected -= DisconnectCancel; });
 
+            // TODO: Maybe wrap in longrunning task? Profiling needed.
             _ = WorkAsync(token);
         }
 
@@ -198,12 +199,12 @@ namespace BotevBotApp.AudioModule.Playback
                 try
                 {
                     CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken);
-                    var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
-
-                    _ = playback.StartAsync(linkedToken);
+                    await using var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
 
                     AudioStartedPlaying?.Invoke(this, new AudioStartedPlayingEventArgs { AudioRequest = request });
-                    await playback.AudioOutputStream.CopyToAsync(discordAudioStream, linkedToken).ConfigureAwait(false);
+                    await using var audioStream = await playback.GetAudioStreamAsync(linkedToken).ConfigureAwait(false);
+
+                    await audioStream.CopyToAsync(discordAudioStream, linkedToken).ConfigureAwait(false);
                     await discordAudioStream.FlushAsync(linkedToken).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)

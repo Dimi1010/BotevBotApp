@@ -41,6 +41,9 @@ namespace BotevBotApp
                                 }));
 
                                 services.AddSingleton<ICommandHandler, CommandHandler>();
+                                // Add modules here.
+                                services.AddAudioModule();
+
                                 services.AddHostedService<DiscordWorker>();
                             });
         }

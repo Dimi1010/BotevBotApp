@@ -14,6 +14,7 @@ namespace BotevBotApp.AudioModule.Services
         private readonly IRequestParserService requestParser;
         private readonly IAudioClientWorkerFactory audioClientWorkerFactory;
         private readonly ConcurrentDictionary<ulong, IAudioClientWorker> workers = new();
+        private readonly SemaphoreSlim audioClientsLock = new SemaphoreSlim(1);
 
         public AudioService(IRequestParserService requestParser, IAudioClientWorkerFactory audioClientWorkerFactory)
         {
@@ -22,13 +23,41 @@ namespace BotevBotApp.AudioModule.Services
         }
 
         /// <inheritdoc/>
-        public Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, string request, string requester, CancellationToken cancellationToken = default)
-            => EnqueueAudioAsync(channelDto, new AudioRequestDTO { Request = request, Requester = requester }, cancellationToken);
+        public async Task<IAudioClientWorker> StartAudioAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default)
+        {
+            await audioClientsLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+            if(!workers.TryGetValue(voiceChannel.Id, out var worker))
+            {
+                var audioClient = await voiceChannel.ConnectAsync().ConfigureAwait(false);
+                worker = audioClientWorkerFactory.CreateAudioClientWorker(voiceChannel.Id, audioClient);
+                workers.TryAdd(voiceChannel.Id, worker);
+            }
+            audioClientsLock.Release();
+            return worker;
+        }
 
         /// <inheritdoc/>
-        public async Task<AudioServiceResult> EnqueueAudioAsync(AudioVoiceChannelDTO channelDto, AudioRequestDTO requestDto, CancellationToken cancellationToken = default)
+        public Task<AudioServiceResult> StopAudioAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default)
         {
-            var client = workers.GetOrAdd(channelDto.Channel.Id, (id) => audioClientWorkerFactory.CreateAudioClientWorker(id, channelDto));
+            if (workers.TryRemove(voiceChannel.Id, out var clientWorker))
+            {
+                clientWorker.Dispose();
+            }
+
+            return Task.FromResult(AudioServiceResult.Success);
+        }
+
+        /// <inheritdoc/>
+        public Task<AudioServiceResult> EnqueueAudioAsync(IVoiceChannel voiceChannel, string request, string requester, CancellationToken cancellationToken = default)
+            => EnqueueAudioAsync(voiceChannel, new AudioRequestDTO { Request = request, Requester = requester }, cancellationToken);
+
+        /// <inheritdoc/>
+        public async Task<AudioServiceResult> EnqueueAudioAsync(IVoiceChannel voiceChannel, AudioRequestDTO requestDto, CancellationToken cancellationToken = default)
+        {
+            if(!workers.TryGetValue(voiceChannel.Id, out var client))
+            {
+                client = await StartAudioAsync(voiceChannel, cancellationToken).ConfigureAwait(false);
+            }
 
             var request = await requestParser.ParseRequestAsync(requestDto, cancellationToken).ConfigureAwait(false);
 
@@ -46,17 +75,6 @@ namespace BotevBotApp.AudioModule.Services
             }
 
             return AudioServiceResult.Success;
-        }
-
-        /// <inheritdoc/>
-        public Task<AudioServiceResult> StopAudioAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default)
-        {
-            if (workers.TryRemove(voiceChannel.Id, out var clientWorker))
-            {
-                clientWorker.Dispose();
-            }
-
-            return Task.FromResult(AudioServiceResult.Success);
         }
 
         /// <inheritdoc/>

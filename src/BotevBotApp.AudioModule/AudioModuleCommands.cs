@@ -13,26 +13,51 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule
 {
+    [RequireOwner]
     public class AudioModuleCommands : ModuleBase<SocketCommandContext>
     {
         private readonly IAudioService audioService;
-        private readonly ConcurrentDictionary<ulong, IAudioClient> audioClients = new ConcurrentDictionary<ulong, IAudioClient>();
-        private readonly SemaphoreSlim audioClientsLock = new SemaphoreSlim(1);
 
         public AudioModuleCommands(IAudioService audioService)
         {
             this.audioService = audioService;
         }
 
-        [Command("play", RunMode = RunMode.Async)]
-        public async Task PlayMusicAsync(string request)
+        [Command("join", RunMode = RunMode.Async)]
+        public Task JoinAsync()
         {
             IVoiceChannel channel = GetVoiceChannelFromUser();
 
             if (channel is null)
             {
-                await ReplyAsync("User must be in a voice channel or a voice channel must be passed as an argument.").ConfigureAwait(false);
-                return;
+                return ReplyAsync("User must be in a voice channel.");
+            }
+
+            return audioService.StartAudioAsync(channel);
+        }
+
+        [Command("leave", RunMode = RunMode.Async)]
+        [Alias("stop")]
+        public Task LeaveAsync()
+        {
+            IVoiceChannel channel = GetVoiceChannelFromUser();
+
+            if (channel is null)
+            {
+                return ReplyAsync("User must be in a voice channel.");
+            }
+
+            return audioService.StopAudioAsync(channel);
+        }
+
+        [Command("play", RunMode = RunMode.Async)]
+        public Task PlayMusicAsync(string request)
+        {
+            IVoiceChannel channel = GetVoiceChannelFromUser();
+
+            if (channel is null)
+            {
+                return ReplyAsync("User must be in a voice channel.");
             }
 
             var requestDto = new AudioRequestDTO
@@ -41,44 +66,7 @@ namespace BotevBotApp.AudioModule
                 Request = request,
             };
 
-            await audioClientsLock.WaitAsync();
-            if (!audioClients.TryGetValue(channel.Id, out IAudioClient audioClient))
-            {
-                audioClient = await channel.ConnectAsync().ConfigureAwait(false);
-
-                IAudioClient updateFactory(ulong id, IAudioClient oldClient)
-                {
-                    if (oldClient.ConnectionState != ConnectionState.Disconnected)
-                    {
-                        oldClient.Dispose();
-                    }
-
-                    return audioClient;
-                }
-
-                audioClients.AddOrUpdate(channel.Id, audioClient, updateFactory);
-            }
-            audioClientsLock.Release();
-
-            var voiceChannelDto = new AudioVoiceChannelDTO
-            {
-                Channel = channel,
-                AudioClient = audioClient,
-            };
-
-            await audioService.EnqueueAudioAsync(voiceChannelDto, requestDto).ConfigureAwait(false);
-        }
-
-        [Command("stop", RunMode = RunMode.Async)]
-        public Task StopPlaybackAsync()
-        {
-            var channel = GetVoiceChannelFromUser();
-            if (audioClients.TryRemove(channel.Id, out _))
-            {
-                return audioService.StopAudioAsync(channel);
-            }
-
-            return Task.CompletedTask;
+            return audioService.EnqueueAudioAsync(channel, requestDto);
         }
 
         [Command("queue", RunMode = RunMode.Async)]
@@ -97,7 +85,7 @@ namespace BotevBotApp.AudioModule
                 msgBuilder.AppendLine($"{idx} {(idx == 1 ? ">>" : "--")} Name: {item.Name} | Requester: {item.Requester} | Source: {item.Source}");
             }
 
-            await ReplyAsync(msgBuilder.ToString());
+            await ReplyAsync(msgBuilder.ToString()).ConfigureAwait(false);
         }
 
         private IVoiceChannel GetVoiceChannelFromUser()

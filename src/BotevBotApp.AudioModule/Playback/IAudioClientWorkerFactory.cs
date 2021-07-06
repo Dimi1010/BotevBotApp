@@ -1,4 +1,4 @@
-﻿using BotevBotApp.AudioModule.DTO;
+﻿using Discord.Audio;
 
 namespace BotevBotApp.AudioModule.Playback
 {
@@ -7,6 +7,6 @@ namespace BotevBotApp.AudioModule.Playback
     /// </summary>
     public interface IAudioClientWorkerFactory
     {
-        public IAudioClientWorker CreateAudioClientWorker(ulong workerId, AudioVoiceChannelDTO channelDTO);
+        public IAudioClientWorker CreateAudioClientWorker(ulong workerId, IAudioClient audioClient);
     }
 }

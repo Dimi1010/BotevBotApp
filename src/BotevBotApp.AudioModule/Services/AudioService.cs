@@ -29,18 +29,24 @@ namespace BotevBotApp.AudioModule.Services
         public async Task<IAudioClientWorker> StartAudioAsync(IVoiceChannel voiceChannel, CancellationToken cancellationToken = default)
         {
             logger.LogDebug($"Starting audio for channel {voiceChannel.Id}");
-            await audioClientsLock.WaitAsync(cancellationToken).ConfigureAwait(false);
-            if(!workers.TryGetValue(voiceChannel.Id, out var worker))
+            try
             {
-                logger.LogTrace($"Creating new audio connection for channel {voiceChannel.Id}");
-                var audioClient = await voiceChannel.ConnectAsync().ConfigureAwait(false);
-                logger.LogTrace($"Creating new audio worker for channel {voiceChannel.Id}");
-                worker = audioClientWorkerFactory.CreateAudioClientWorker(voiceChannel.Id, audioClient);
-                workers.TryAdd(voiceChannel.Id, worker);
-                logger.LogTrace($"New audio connection worker for channel {voiceChannel.Id} created.");
+                await audioClientsLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+                if (!workers.TryGetValue(voiceChannel.Id, out var worker))
+                {
+                    logger.LogTrace($"Creating new audio connection for channel {voiceChannel.Id}");
+                    var audioClient = await voiceChannel.ConnectAsync().ConfigureAwait(false);
+                    logger.LogTrace($"Creating new audio worker for channel {voiceChannel.Id}");
+                    worker = audioClientWorkerFactory.CreateAudioClientWorker(voiceChannel.Id, audioClient);
+                    workers.TryAdd(voiceChannel.Id, worker);
+                    logger.LogTrace($"New audio connection worker for channel {voiceChannel.Id} created.");
+                }
+                return worker;
             }
-            audioClientsLock.Release();
-            return worker;
+            finally
+            {
+                audioClientsLock.Release();
+            }
         }
 
         /// <inheritdoc/>

@@ -1,5 +1,6 @@
 ﻿using BotevBotApp.AudioModule.DTO;
 using BotevBotApp.AudioModule.Requests;
+using BotevBotApp.AudioModule.Requests.Parsers;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;

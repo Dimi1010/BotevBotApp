@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BotevBotApp.AudioModule.Requests
+namespace BotevBotApp.AudioModule.Requests.Parsers
 {
     public interface IRequestParser
     {

@@ -1,11 +1,7 @@
 ﻿using BotevBotApp.AudioModule.Playback;
+using BotevBotApp.AudioModule.Requests.Parsers;
 using BotevBotApp.AudioModule.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule
 {
@@ -17,8 +13,9 @@ namespace BotevBotApp.AudioModule
             services.AddTransient<IModuleInfo, AudioModuleInfo>();
 
             services.AddTransient<IAudioClientWorkerFactory, AudioClientWorkerFactory>();
-            
+
             // TODO: Add request parsers here.
+            services.AddTransient<IRequestParser, YoutubeRequestParser>();
 
             // TODO: Maybe make this transient?
             services.AddSingleton<IRequestParserService, RequestParserService>();

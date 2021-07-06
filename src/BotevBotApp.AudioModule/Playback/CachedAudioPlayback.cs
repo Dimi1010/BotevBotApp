@@ -18,8 +18,16 @@ namespace BotevBotApp.AudioModule.Playback
         /// </summary>
         public bool Cached { get; private set; } = false;
 
+        /// <summary>
+        /// Constructs new instance of a <see cref="CachedAudioPlayback"/> over another <see cref="AudioPlayback"/>.
+        /// </summary>
+        /// <param name="innerPlayback">The audio playback to cache.</param>
+        /// <exception cref="ArgumentNullException">The provided playback was null.</exception>
         public CachedAudioPlayback(AudioPlayback innerPlayback)
         {
+            if (innerPlayback is null)
+                throw new ArgumentNullException(nameof(innerPlayback));
+
             this.innerPlayback = innerPlayback;
         }
 
@@ -75,7 +83,7 @@ namespace BotevBotApp.AudioModule.Playback
             if (disposing)
             {
                 innerPlayback.Dispose();
-                cachedStream.Dispose();
+                cachedStream?.Dispose();
             }
         }
 
@@ -86,7 +94,8 @@ namespace BotevBotApp.AudioModule.Playback
 
             await base.DisposeAsyncCore().ConfigureAwait(false);
             await innerPlayback.DisposeAsync().ConfigureAwait(false);
-            await cachedStream.DisposeAsync().ConfigureAwait(false);
+            if (cachedStream is not null)
+                await cachedStream.DisposeAsync().ConfigureAwait(false);
         }
 
         /// <summary>

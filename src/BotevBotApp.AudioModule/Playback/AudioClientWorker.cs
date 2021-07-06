@@ -1,6 +1,7 @@
 ﻿using BotevBotApp.AudioModule.DTO;
 using BotevBotApp.AudioModule.Requests;
 using Discord.Audio;
+using Microsoft.Extensions.Logging;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;
@@ -54,6 +55,7 @@ namespace BotevBotApp.AudioModule.Playback
 
 
         private readonly IAudioClient discordAudioClient;
+        private readonly ILogger<AudioClientWorker> logger;
 
         /// <summary>
         /// The collection used to store the requests.
@@ -82,11 +84,11 @@ namespace BotevBotApp.AudioModule.Playback
         }
         private event EventHandler<SkipSongRequestEventArgs> SkipSongRequest;
 
-        public AudioClientWorker(ulong workerId, IAudioClient discordAudioClient)
+        public AudioClientWorker(ulong workerId, IAudioClient discordAudioClient, ILogger<AudioClientWorker> logger)
         {
             WorkerId = workerId;
             this.discordAudioClient = discordAudioClient;
-
+            this.logger = logger;
             _queueInternal = new();
             queue = new(_queueInternal);
 
@@ -103,6 +105,7 @@ namespace BotevBotApp.AudioModule.Playback
         /// <inheritdoc/>
         public void Dispose()
         {
+            logger.LogTrace($"Disposing...");
             queue.CompleteAdding();
             cancellationTokenSource.Cancel();
             // Should the cts be disposed?
@@ -111,6 +114,7 @@ namespace BotevBotApp.AudioModule.Playback
         /// <inheritdoc/>
         public async Task EnqueueAsync(AudioRequest request, CancellationToken cancellationToken = default)
         {
+            logger.LogDebug($"Enqueing request: {request}");
             Interlocked.Increment(ref queueLength);
             try
             {
@@ -128,6 +132,7 @@ namespace BotevBotApp.AudioModule.Playback
         public Task SkipAsync(int songsToSkip, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            logger.LogDebug($"Skipping {songsToSkip} requests.");
             Interlocked.Add(ref queueLength, -songsToSkip);
             SkipSongRequest?.Invoke(this, new SkipSongRequestEventArgs { SongsToSkip = songsToSkip });
             return Task.CompletedTask;
@@ -137,6 +142,7 @@ namespace BotevBotApp.AudioModule.Playback
         public Task ClearAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            logger.LogDebug($"Skipping all requests.");
             var toSkip = Interlocked.Exchange(ref queueLength, 0);
             SkipSongRequest?.Invoke(this, new SkipSongRequestEventArgs { SongsToSkip = toSkip });
             return Task.CompletedTask;
@@ -146,6 +152,7 @@ namespace BotevBotApp.AudioModule.Playback
         public async Task<IEnumerable<AudioItemDTO>> GetQueueItemsAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            logger.LogDebug($"Fetching request queue.");
             var current = CurrentlyPlaying;
 
             var queueRequests = _queueInternal.ToArray();
@@ -165,60 +172,90 @@ namespace BotevBotApp.AudioModule.Playback
         /// <returns>A task representing the work operation.</returns>
         private async Task WorkAsync(CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            using var discordAudioStream = discordAudioClient.CreatePCMStream(AudioApplication.Music);
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                var request = await queue.TakeAsync(cancellationToken).ConfigureAwait(false);
-                Interlocked.Decrement(ref queueLength);
+                logger.LogDebug($"Starting worker...");
+            
+                cancellationToken.ThrowIfCancellationRequested();
 
-                using var cancelCurrentSong = new CancellationTokenSource();
-                using var mainAndCancelCurrentSongLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cancelCurrentSong.Token);
-                var linkedToken = mainAndCancelCurrentSongLinkedCts.Token;
-
-                async void skipSongs(object sender, SkipSongRequestEventArgs eventArgs)
+                logger.LogTrace("Creating output stream.");
+                using var discordAudioStream = discordAudioClient.CreatePCMStream(AudioApplication.Music);
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    using var maxSkipExecutionTimeCts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
-                    using var mainAndmaxSkipExecutionCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, maxSkipExecutionTimeCts.Token);
+                    logger.LogTrace("Waiting for request.");
+                    var request = await queue.TakeAsync(cancellationToken).ConfigureAwait(false);
+                    logger.LogTrace($"Dequeued request: {request}");
+                    Interlocked.Decrement(ref queueLength);
+
+                    using var cancelCurrentSong = new CancellationTokenSource();
+                    using var mainAndCancelCurrentSongLinkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cancelCurrentSong.Token);
+                    var linkedToken = mainAndCancelCurrentSongLinkedCts.Token;
+
+                    async void skipSongs(object sender, SkipSongRequestEventArgs eventArgs)
+                    {
+                        using var maxSkipExecutionTimeCts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+                        using var mainAndmaxSkipExecutionCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, maxSkipExecutionTimeCts.Token);
+                        try
+                        {
+                            for (int skipped = 0; skipped < eventArgs.SongsToSkip - 1; skipped++)
+                            {
+                                logger.LogTrace($"Dequeing request to skip.");
+                                var request = await queue.TakeAsync(mainAndmaxSkipExecutionCts.Token).ConfigureAwait(false);
+                                logger.LogTrace($"Skipping request: {request}");
+                                AudioSkipped?.Invoke(this, new AudioSkippedEventArgs { AudioRequest = request });
+                            }
+                        }
+                        finally
+                        {
+                            cancelCurrentSong.Cancel();
+                        }
+                    }
+
+                    linkedToken.ThrowIfCancellationRequested();
+                    SkipSongRequest += skipSongs;
                     try
                     {
-                        for (int skipped = 0; skipped < eventArgs.SongsToSkip - 1; skipped++)
+                        logger.LogTrace($"Updating currently playing.");
+                        CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken);
+                        logger.LogTrace($"Getting audio playback for request {request}");
+                        await using var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
+
+                        AudioStartedPlaying?.Invoke(this, new AudioStartedPlayingEventArgs { AudioRequest = request });
+                        logger.LogTrace($"Getting audio playback stream from playback: {playback}");
+                        await using var audioStream = await playback.GetAudioStreamAsync(linkedToken).ConfigureAwait(false);
+
+                        try
                         {
-                            var request = await queue.TakeAsync(mainAndmaxSkipExecutionCts.Token).ConfigureAwait(false);
-                            AudioSkipped?.Invoke(this, new AudioSkippedEventArgs { AudioRequest = request });
+                            logger.LogTrace($"Copying to output stream...");
+                            await audioStream.CopyToAsync(discordAudioStream, linkedToken).ConfigureAwait(false);
                         }
+                        finally
+                        {
+                            logger.LogTrace($"Waiting for output stream to flush...");
+                            await discordAudioStream.FlushAsync(linkedToken).ConfigureAwait(false);
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        logger.LogTrace($"Cancellation requested.");
+                        if (cancellationToken.IsCancellationRequested) throw;
                     }
                     finally
                     {
-                        cancelCurrentSong.Cancel();
+                        logger.LogTrace($"Resetting currently playing and performing cleanup.");
+                        CurrentlyPlaying = null;
+                        SkipSongRequest -= skipSongs;
+                        AudioStoppedPlaying?.Invoke(this, new AudioStoppedPlayingEventArgs { AudioRequest = request });
                     }
                 }
-
-                linkedToken.ThrowIfCancellationRequested();
-                SkipSongRequest += skipSongs;
-                try
-                {
-                    CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken);
-                    await using var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
-
-                    AudioStartedPlaying?.Invoke(this, new AudioStartedPlayingEventArgs { AudioRequest = request });
-                    await using var audioStream = await playback.GetAudioStreamAsync(linkedToken).ConfigureAwait(false);
-
-                    try { await audioStream.CopyToAsync(discordAudioStream, linkedToken).ConfigureAwait(false); }
-                    finally { await discordAudioStream.FlushAsync(linkedToken).ConfigureAwait(false); }
-                }
-                catch (OperationCanceledException)
-                {
-                    if (cancellationToken.IsCancellationRequested) throw;
-                }
-                finally
-                {
-                    CurrentlyPlaying = null;
-                    SkipSongRequest -= skipSongs;
-                    AudioStoppedPlaying?.Invoke(this, new AudioStoppedPlayingEventArgs { AudioRequest = request });
-                }
+                cancellationToken.ThrowIfCancellationRequested();
             }
-            cancellationToken.ThrowIfCancellationRequested();
+            finally
+            {
+                logger.LogDebug($"Stopping worker...");
+                await discordAudioClient.StopAsync();
+                discordAudioClient.Dispose();
+            }
         }
     }
 }

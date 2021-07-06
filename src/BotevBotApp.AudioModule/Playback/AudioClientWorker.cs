@@ -31,6 +31,7 @@ namespace BotevBotApp.AudioModule.Playback
 
 
         private AudioItemDTO _currentlyPlaying = null;
+        private readonly object _currentlyPlayingLock = new object();
 
         /// <summary>
         /// Gets the currently playing item.
@@ -39,14 +40,14 @@ namespace BotevBotApp.AudioModule.Playback
         {
             get
             {
-                lock (_currentlyPlaying)
+                lock (_currentlyPlayingLock)
                 {
                     return _currentlyPlaying;
                 }
             }
             private set
             {
-                lock (_currentlyPlaying)
+                lock (_currentlyPlayingLock)
                 {
                     _currentlyPlaying = value;
                 }
@@ -216,7 +217,7 @@ namespace BotevBotApp.AudioModule.Playback
                     try
                     {
                         logger.LogTrace($"Updating currently playing.");
-                        CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken);
+                        CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken).ConfigureAwait(false);
                         logger.LogTrace($"Getting audio playback for request {request}");
                         await using var playback = await request.GetAudioPlaybackAsync(linkedToken).ConfigureAwait(false);
 
@@ -250,6 +251,8 @@ namespace BotevBotApp.AudioModule.Playback
                 }
                 cancellationToken.ThrowIfCancellationRequested();
             }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex) { logger.LogError(ex, $"Worker stopping with exception!"); throw; }
             finally
             {
                 logger.LogDebug($"Stopping worker...");

@@ -1,27 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.4.0" />
-    <PackageReference Include="FFMpegCore" Version="4.3.0" />
-    <PackageReference Include="FileStorageProviders" Version="0.1.1" />
-    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
-    <PackageReference Include="VideoLibrary" Version="3.1.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="lib\libsodium.dll">
+            <Link>libsodium.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="lib\opus.dll">
+            <Link>opus.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="lib\libsodium.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="lib\opus.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Discord.Net" Version="2.4.0" />
+        <PackageReference Include="FFMpegCore" Version="4.3.0" />
+        <PackageReference Include="FileStorageProviders" Version="0.1.1" />
+        <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
+        <PackageReference Include="VideoLibrary" Version="3.1.2" />
+    </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="XCOPY &quot;$(ProjectDir)lib\&quot; &quot;$(TargetDir)&quot; /D /S /Y" />
-  </Target>
 </Project>

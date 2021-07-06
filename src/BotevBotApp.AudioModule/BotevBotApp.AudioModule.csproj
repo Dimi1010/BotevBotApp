@@ -11,4 +11,17 @@
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="VideoLibrary" Version="3.1.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="lib\libsodium.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="lib\opus.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="XCOPY &quot;$(ProjectDir)lib\&quot; &quot;$(TargetDir)&quot; /D /S /Y" />
+  </Target>
 </Project>

@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp.AudioModule", "src\BotevBotApp.AudioModule\BotevBotApp.AudioModule.csproj", "{850381AF-ADAA-4383-8254-2B70DFA91B76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp", "src\BotevBotApp\BotevBotApp.csproj", "{866947B9-3138-4DC8-B4FF-4A0ED9836A82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp.AudioModuleTests", "tests\BotevBotApp.AudioModuleTests\BotevBotApp.AudioModuleTests.csproj", "{907513AB-204B-41A4-8A29-8E6A471DFE61}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{80AAC7C5-5DE9-4C56-9163-FBF70DD7ADB0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1BDD2488-0FA6-4011-9A0E-6E6CCC9B3EA0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp.Shared", "src\BotevBotApp.Shared\BotevBotApp.Shared.csproj", "{A1362BCD-5DF7-435B-820E-7DDA24986F08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,17 +17,21 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{850381AF-ADAA-4383-8254-2B70DFA91B76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{907513AB-204B-41A4-8A29-8E6A471DFE61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{866947B9-3138-4DC8-B4FF-4A0ED9836A82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{866947B9-3138-4DC8-B4FF-4A0ED9836A82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{866947B9-3138-4DC8-B4FF-4A0ED9836A82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{866947B9-3138-4DC8-B4FF-4A0ED9836A82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{866947B9-3138-4DC8-B4FF-4A0ED9836A82} = {80AAC7C5-5DE9-4C56-9163-FBF70DD7ADB0}
+		{A1362BCD-5DF7-435B-820E-7DDA24986F08} = {80AAC7C5-5DE9-4C56-9163-FBF70DD7ADB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D0C9175-B60B-4229-8A52-BA3D10CF0CF9}

@@ -1,3 +1,4 @@
+using BotevBotApp.AudioModule;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,9 @@ namespace BotevBotApp
                                 {
                                     LogLevel = logLevel.ToLogSeverity(),
                                 }));
+
+                                // Adds the core module information.
+                                services.AddTransient<IModuleInfo, CoreModuleInfo>();
 
                                 services.AddSingleton<ICommandHandler, CommandHandler>();
                                 // Add modules here.

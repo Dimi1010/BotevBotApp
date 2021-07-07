@@ -16,14 +16,16 @@ namespace BotevBotApp
         private readonly ILogger<DiscordWorker> logger;
         private readonly DiscordSocketClient socketClient;
         private readonly ICommandHandler commandHandler;
+        private readonly IEnumerable<IModuleInfo> modules;
         private readonly LoginOptions loginOptions;
         private bool disposedValue;
 
-        public DiscordWorker(ILogger<DiscordWorker> logger, DiscordSocketClient socketClient, ICommandHandler commandHandler, IOptions<LoginOptions> loginOptions)
+        public DiscordWorker(ILogger<DiscordWorker> logger, DiscordSocketClient socketClient, ICommandHandler commandHandler, IOptions<LoginOptions> loginOptions, IEnumerable<IModuleInfo> modules)
         {
             this.logger = logger;
             this.socketClient = socketClient;
             this.commandHandler = commandHandler;
+            this.modules = modules;
             this.loginOptions = loginOptions.Value;
         }
 
@@ -31,7 +33,10 @@ namespace BotevBotApp
         {
             cancellationToken.ThrowIfCancellationRequested();
             logger.LogInformation("Starting Service...");
-            await commandHandler.InitializeModulesAsync();
+
+            await commandHandler.InitializeModulesAsync(
+                modules.Select(info => info.GetModuleAssembly()).AsEnumerable());
+
             await socketClient.LoginAsync(TokenType.Bot, loginOptions.Token);
             await socketClient.StartAsync();
             socketClient.Log += SocketClient_Log;

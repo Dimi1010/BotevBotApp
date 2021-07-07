@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{80AAC7C5-5DE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1BDD2488-0FA6-4011-9A0E-6E6CCC9B3EA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotevBotApp.Shared", "BotevBotApp.Shared\BotevBotApp.Shared.csproj", "{A1362BCD-5DF7-435B-820E-7DDA24986F08}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotevBotApp.Shared", "src\BotevBotApp.Shared\BotevBotApp.Shared.csproj", "{A1362BCD-5DF7-435B-820E-7DDA24986F08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

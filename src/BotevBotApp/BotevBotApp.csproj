@@ -11,6 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BotevBotApp.Shared\BotevBotApp.Shared.csproj" />
+    <ProjectReference Include="..\BotevBotApp.Shared\BotevBotApp.Shared.csproj" />
   </ItemGroup>
 </Project>

@@ -40,6 +40,9 @@ namespace BotevBotApp
                                     LogLevel = logLevel.ToLogSeverity(),
                                 }));
 
+                                // Adds the core module information.
+                                services.AddTransient<IModuleInfo, CoreModuleInfo>();
+
                                 services.AddSingleton<ICommandHandler, CommandHandler>();
                                 services.AddHostedService<DiscordWorker>();
                             });

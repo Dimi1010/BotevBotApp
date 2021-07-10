@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule
 {
-    [RequireOwner]
     public class AudioModuleCommands : ModuleBase<SocketCommandContext>
     {
         private readonly IAudioService audioService;

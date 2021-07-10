@@ -48,7 +48,6 @@ namespace BotevBotApp.AudioModule.Requests
                 };
 
                 return new StreamSourceAudioPlayback(audioStream)
-                    .WithCache()
                     .WithDecoding(decodingOptions)
                     .WithCache();
             }

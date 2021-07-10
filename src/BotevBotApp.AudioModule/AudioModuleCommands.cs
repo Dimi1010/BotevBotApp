@@ -78,7 +78,7 @@ namespace BotevBotApp.AudioModule
 
             var msgBuilder = new StringBuilder();
             
-            int idx = -1;
+            int idx = 0;
             foreach (var item in queue)
             {
                 idx++;

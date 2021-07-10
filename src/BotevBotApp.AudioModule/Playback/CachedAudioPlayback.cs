@@ -8,10 +8,12 @@ namespace BotevBotApp.AudioModule.Playback
     /// <summary>
     /// Wrapper over an <see cref="AudioPlayback"/> that caches the playback <see cref="Stream"/> into a <see cref="MemoryStream"/>.
     /// </summary>
-    public sealed class CachedAudioPlayback : AudioPlayback
+    public class CachedAudioPlayback : AudioPlayback
     {
         private readonly AudioPlayback innerPlayback;
+        private readonly object cachingLock = new();
         private MemoryStream cachedStream = null;
+        private Task cachingTask = null;
 
         /// <summary>
         /// Gets weather the playback stream has been cached.
@@ -45,11 +47,14 @@ namespace BotevBotApp.AudioModule.Playback
         /// </summary>
         /// <param name="cancellationToken">A token to monitor for cancellation.</param>
         /// <returns>A task representing the operation.</returns>
-        private Task<Stream> GetCacheCopyAsync(CancellationToken cancellationToken = default)
+        protected Task<Stream> GetCacheCopyAsync(CancellationToken cancellationToken = default)
         {
             ThrowIfDisposed();
-
             cancellationToken.ThrowIfCancellationRequested();
+            
+            if (!Cached)
+                throw new PlaybackNotCachedException();
+
             var outputStream = new MemoryStream(cachedStream.Capacity);
             cachedStream.WriteTo(outputStream);
             outputStream.Position = 0;
@@ -61,23 +66,50 @@ namespace BotevBotApp.AudioModule.Playback
         /// </summary>
         /// <param name="cancellationToken">A token to monitor for cancellation.</param>
         /// <returns>A task representing the operation.</returns>
-        private async Task<Stream> GetAndCacheAudioStreamAsync(CancellationToken cancellationToken = default)
+        protected async Task<Stream> GetAndCacheAudioStreamAsync(CancellationToken cancellationToken = default)
         {
             ThrowIfDisposed();
 
-            cancellationToken.ThrowIfCancellationRequested();
-            using var innerStream = await innerPlayback.GetAudioStreamAsync(cancellationToken).ConfigureAwait(false);
-            cancellationToken.ThrowIfCancellationRequested();
-            // Cancellation of the copy to cache partway will corrupt the cache.
-            cachedStream = new MemoryStream();
-            await innerStream.CopyToAsync(cachedStream, CancellationToken.None).ConfigureAwait(false);
-            Cached = true;
-            
-            // Disposes of inner playback as its already cached.
-            await innerPlayback.DisposeAsync().ConfigureAwait(false);
-            
+            await CacheAudioStreamAsync(cancellationToken);
             return await GetCacheCopyAsync(cancellationToken);
         }
+        
+        /// <summary>
+        /// Caches the audio stream asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken">A token to monitor for cancellation.</param>
+        /// <returns>A task representing the caching operation.</returns>
+        protected Task CacheAudioStreamAsync(CancellationToken cancellationToken = default)
+        {
+            ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            lock (cachingLock)
+            {
+               return cachingTask ??= CacheAudioStreamInternalAsync();
+            }
+        }
+
+        /// <summary>
+        /// The internal asynchronous caching operation.
+        /// </summary>
+        /// <returns>A task representing the caching operation.</returns>
+        /// <remarks>
+        /// Cannot be cancelled because it may corrupt the cache.
+        /// </remarks>
+        private async Task CacheAudioStreamInternalAsync()
+        {
+            ThrowIfDisposed();
+
+            using var innerStream = await innerPlayback.GetAudioStreamAsync().ConfigureAwait(false);
+            // Cancellation of the copy to cache partway will corrupt the cache.
+            cachedStream = new MemoryStream();
+            await innerStream.CopyToAsync(cachedStream).ConfigureAwait(false);
+            Cached = true;
+
+            // Disposes of inner playback as its already cached.
+            await innerPlayback.DisposeAsync().ConfigureAwait(false);
+        }
+
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposing)
@@ -114,5 +146,40 @@ namespace BotevBotApp.AudioModule.Playback
         {
             return this;
         }
+    }
+
+
+    [Serializable]
+    public class CacheException : Exception
+    {
+        public CacheException() { }
+        public CacheException(string message) : base(message) { }
+        public CacheException(string message, Exception inner) : base(message, inner) { }
+        protected CacheException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
+
+    [Serializable]
+    public class PlaybackAlreadyCachedException : CacheException
+    {
+        public PlaybackAlreadyCachedException() { }
+        public PlaybackAlreadyCachedException(string message) : base(message) { }
+        public PlaybackAlreadyCachedException(string message, Exception inner) : base(message, inner) { }
+        protected PlaybackAlreadyCachedException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
+
+    [Serializable]
+    public class PlaybackNotCachedException : CacheException
+    {
+        public PlaybackNotCachedException() { }
+        public PlaybackNotCachedException(string message) : base(message) { }
+        public PlaybackNotCachedException(string message, Exception inner) : base(message, inner) { }
+        protected PlaybackNotCachedException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace BotevBotApp.AudioModule.Requests
 {
-    internal class AudioRequestFactory
+    internal abstract class AudioRequestFactory
     {
         protected readonly ILoggerFactory loggerFactory;
 

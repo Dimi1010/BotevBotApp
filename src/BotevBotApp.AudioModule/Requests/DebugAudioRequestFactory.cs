@@ -2,7 +2,7 @@
 
 namespace BotevBotApp.AudioModule.Requests
 {
-    internal class DebugAudioRequestFactory : AudioRequestFactory
+    internal sealed class DebugAudioRequestFactory : AudioRequestFactory
     {
         public DebugAudioRequestFactory(ILoggerFactory loggerFactory) : base(loggerFactory)
         {

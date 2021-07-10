@@ -3,7 +3,7 @@ using System;
 
 namespace BotevBotApp.AudioModule.Requests
 {
-    internal class YoutubeAudioRequestFactory : AudioRequestFactory
+    internal sealed class YoutubeAudioRequestFactory : AudioRequestFactory
     {
         public YoutubeAudioRequestFactory(ILoggerFactory loggerFactory) : base(loggerFactory)
         {

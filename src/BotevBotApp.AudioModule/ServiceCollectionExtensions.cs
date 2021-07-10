@@ -13,7 +13,7 @@ namespace BotevBotApp.AudioModule
             // Contains information about the module.
             services.AddTransient<IModuleInfo, AudioModuleInfo>();
 
-            services.AddTransient<IAudioClientWorkerFactory, AudioClientWorkerFactory>();
+            services.AddTransient<IAudioClientWorkerFactory, PreloadingAudioClientWorkerFactory>();
 
             // TODO: Add request factories here.
             services.AddTransient<YoutubeAudioRequestFactory>();

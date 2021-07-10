@@ -69,6 +69,19 @@ namespace BotevBotApp.AudioModule
             return audioService.EnqueueAudioAsync(channel, requestDto);
         }
 
+        [Command("skip", RunMode = RunMode.Async)]
+        public Task SkipSongAsync(int numSongs)
+        {
+            IVoiceChannel channel = GetVoiceChannelFromUser();
+
+            if (channel is null)
+            {
+                return ReplyAsync("User must be in a voice channel.");
+            }
+
+            return audioService.SkipAudioAsync(channel, numSongs);
+        }
+
         [Command("queue", RunMode = RunMode.Async)]
         public async Task GetQueueAsync()
         {

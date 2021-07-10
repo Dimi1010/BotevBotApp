@@ -8,11 +8,11 @@ using VideoLibrary;
 
 namespace BotevBotApp.AudioModule.Requests
 {
-    public class YoutubeAudioRequest : RemoteAudioRequest
+    internal class YoutubeAudioRequest : RemoteAudioRequest
     {
         public const string ExpectedHost = "www.youtube.com";
 
-        public YoutubeAudioRequest(string requester, Uri url) : base(requester, url)
+        public YoutubeAudioRequest(Uri url, string requester) : base(url, requester)
         {
         }
 
@@ -36,7 +36,7 @@ namespace BotevBotApp.AudioModule.Requests
 
             var videoStream = await bestCandidate.StreamAsync().ConfigureAwait(false);
 
-            return new StreamSourceAudioPlayback(videoStream).WithCache().WithDecoding();
+            return new StreamSourceAudioPlayback(videoStream).WithCache().WithDecoding().WithCache();
         }
 
         public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)

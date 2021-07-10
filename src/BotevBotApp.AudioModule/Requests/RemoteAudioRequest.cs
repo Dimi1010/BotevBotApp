@@ -9,7 +9,7 @@ namespace BotevBotApp.AudioModule.Requests
     {
         protected Uri Url { get; private set; }
 
-        protected RemoteAudioRequest(string requester, Uri url) : base(requester)
+        protected RemoteAudioRequest(Uri url, string requester) : base(requester)
         {
             if (!ValidateUrl(url))
                 throw new InvalidUrlException($"The provided url: {url} is invalid.");

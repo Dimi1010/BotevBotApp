@@ -1,6 +1,7 @@
 ﻿using BotevBotApp.AudioModule.DTO;
 using BotevBotApp.AudioModule.Playback;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,13 +31,32 @@ namespace BotevBotApp.AudioModule.Requests
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var bestCandidate = videos.First(video => video.Resolution == videos.Min(v => v.Resolution));
+            var bestAudioCandidate = videos.FirstOrDefault(x => x.AdaptiveKind == AdaptiveKind.Audio);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            var videoStream = await bestCandidate.StreamAsync().ConfigureAwait(false);
+            if (bestAudioCandidate is not null)
+            {
+                var audioStream = await bestAudioCandidate.StreamAsync().ConfigureAwait(false);
 
-            return new StreamSourceAudioPlayback(videoStream).WithCache().WithDecoding().WithCache();
+                var decodingOptions = DecodingAudioPlaybackOptions.Default;
+
+                decodingOptions.InputArgumentsOptions = options =>
+                {
+                    // Explicit setting of audio codec as ffmpeg cannot infer codec from pipe input.
+                    options.WithAudioCodec(bestAudioCandidate.AudioFormat.ToString());
+                };
+
+                return new StreamSourceAudioPlayback(audioStream)
+                    .WithCache()
+                    .WithDecoding(decodingOptions)
+                    .WithCache();
+            }
+            else
+            {
+                // Returns empty stream if can't find audio.
+                return new StreamSourceAudioPlayback(new MemoryStream());
+            }
         }
 
         public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)

@@ -11,7 +11,7 @@ namespace BotevBotApp.AudioModule.Playback
     /// <remarks>
     /// Takes over management and disposal of the provided stream.
     /// </remarks>
-    internal class StreamSourceAudioPlayback : AudioPlayback
+    public sealed class StreamSourceAudioPlayback : AudioPlayback
     {
         private readonly Stream sourceStream;
         private Task<Stream> cachedSourceStreamTask;

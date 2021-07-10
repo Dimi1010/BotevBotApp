@@ -6,7 +6,7 @@ namespace BotevBotApp.AudioModule.Playback
     /// <summary>
     /// A factory for creating <see cref="AudioClientWorker"/> instances.
     /// </summary>
-    public class AudioClientWorkerFactory : IAudioClientWorkerFactory
+    internal class AudioClientWorkerFactory : IAudioClientWorkerFactory
     {
         private readonly ILoggerFactory loggerFactory;
 

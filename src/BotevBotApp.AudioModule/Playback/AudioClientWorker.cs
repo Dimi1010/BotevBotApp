@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Playback
 {
-    public sealed class AudioClientWorker : IDisposable, IAudioClientWorker
+    internal sealed class AudioClientWorker : IDisposable, IAudioClientWorker
     {
         /// <inheritdoc/>
         public event EventHandler<AudioEnqueuedEventArgs> AudioEnqueued;
@@ -107,9 +107,9 @@ namespace BotevBotApp.AudioModule.Playback
         public void Dispose()
         {
             logger.LogTrace($"Disposing...");
-            queue.CompleteAdding();
-            cancellationTokenSource.Cancel();
             // Should the cts be disposed?
+            cancellationTokenSource.Cancel();
+            queue.CompleteAdding();
         }
 
         /// <inheritdoc/>
@@ -183,6 +183,7 @@ namespace BotevBotApp.AudioModule.Playback
                 using var discordAudioStream = discordAudioClient.CreatePCMStream(AudioApplication.Music);
                 while (!cancellationToken.IsCancellationRequested)
                 {
+
                     logger.LogTrace("Waiting for request.");
                     var request = await queue.TakeAsync(cancellationToken).ConfigureAwait(false);
                     logger.LogTrace($"Dequeued request: {request}");
@@ -212,10 +213,11 @@ namespace BotevBotApp.AudioModule.Playback
                         }
                     }
 
-                    linkedToken.ThrowIfCancellationRequested();
-                    SkipSongRequest += skipSongs;
                     try
                     {
+                        SkipSongRequest += skipSongs;
+                        linkedToken.ThrowIfCancellationRequested();
+
                         logger.LogTrace($"Updating currently playing.");
                         CurrentlyPlaying = await request.ToAudioItemAsync(linkedToken).ConfigureAwait(false);
                         logger.LogTrace($"Getting audio playback for request {request}");
@@ -238,7 +240,7 @@ namespace BotevBotApp.AudioModule.Playback
                     }
                     catch (OperationCanceledException)
                     {
-                        logger.LogTrace($"Cancellation requested.");
+                        logger.LogTrace($"Cancellation requested during playback.");
                         if (cancellationToken.IsCancellationRequested) throw;
                     }
                     finally
@@ -251,7 +253,10 @@ namespace BotevBotApp.AudioModule.Playback
                 }
                 cancellationToken.ThrowIfCancellationRequested();
             }
-            catch (OperationCanceledException) { throw; }
+            catch (OperationCanceledException) {
+                logger.LogTrace($"Worker cancellation requested.");
+                throw;
+            }
             catch (Exception ex) { logger.LogError(ex, $"Worker stopping with exception!"); throw; }
             finally
             {

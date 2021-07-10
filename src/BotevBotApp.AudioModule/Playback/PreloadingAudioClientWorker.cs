@@ -119,7 +119,7 @@ namespace BotevBotApp.AudioModule.Playback
         private event EventHandler<SkipSongRequestEventArgs> SkipRequest;
         private event EventHandler<SkipSongRequestEventArgs> SkipCurrentRequest;
 
-        public PreloadingAudioClientWorker(ulong workerId, IAudioClient discordAudioClient, ILogger<PreloadingAudioClientWorker> logger, int keepPreloaded = 3)
+        public PreloadingAudioClientWorker(ulong workerId, IAudioClient discordAudioClient, ILogger<PreloadingAudioClientWorker> logger, int keepPreloaded = 2)
         {
             WorkerId = workerId;
             this.discordAudioClient = discordAudioClient;

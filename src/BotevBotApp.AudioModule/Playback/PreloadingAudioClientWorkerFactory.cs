@@ -11,7 +11,7 @@ namespace BotevBotApp.AudioModule.Playback
         private readonly ILoggerFactory loggerFactory;
         private readonly int keepPreloaded;
 
-        public PreloadingAudioClientWorkerFactory(ILoggerFactory loggerFactory, int keepPreloaded = 3)
+        public PreloadingAudioClientWorkerFactory(ILoggerFactory loggerFactory, int keepPreloaded = 2)
         {
             this.loggerFactory = loggerFactory;
             this.keepPreloaded = keepPreloaded;

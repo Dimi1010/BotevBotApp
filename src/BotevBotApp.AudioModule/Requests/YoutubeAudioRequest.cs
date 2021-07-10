@@ -1,5 +1,6 @@
 ﻿using BotevBotApp.AudioModule.DTO;
 using BotevBotApp.AudioModule.Playback;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace BotevBotApp.AudioModule.Requests
     {
         public const string ExpectedHost = "www.youtube.com";
 
-        public YoutubeAudioRequest(Uri url, string requester) : base(url, requester)
+        public YoutubeAudioRequest(Uri url, string requester, ILogger<YoutubeAudioRequest> logger) : base(url, requester, logger)
         {
         }
 

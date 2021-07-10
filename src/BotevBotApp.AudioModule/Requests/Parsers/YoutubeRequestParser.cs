@@ -7,6 +7,13 @@ namespace BotevBotApp.AudioModule.Requests.Parsers
 {
     internal class YoutubeRequestParser : IRequestParser
     {
+        private readonly YoutubeAudioRequestFactory requestFactory;
+
+        public YoutubeRequestParser(YoutubeAudioRequestFactory requestFactory)
+        {
+            this.requestFactory = requestFactory;
+        }
+
         /// <inheritdoc/>
         public Task<AudioRequest> ParseRequestAsync(AudioRequestDTO requestDto, CancellationToken cancellationToken = default)
         {
@@ -15,7 +22,7 @@ namespace BotevBotApp.AudioModule.Requests.Parsers
             if (!ParseRequestStart(requestDto.Request))
                 throw new RequestParseException("Request does not match: 'https://www.youtube.com/' or 'https://youtu.be/'");
 
-            return Task.FromResult<AudioRequest>(new YoutubeAudioRequest(new Uri(requestDto.Request), requestDto.Requester));
+            return Task.FromResult<AudioRequest>(requestFactory.CreateAudioRequest(new Uri(requestDto.Request), requestDto.Requester));
         }
 
         private static bool ParseRequestStart(string request)

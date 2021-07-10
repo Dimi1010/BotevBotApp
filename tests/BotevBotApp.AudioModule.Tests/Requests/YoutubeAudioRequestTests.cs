@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,7 +20,9 @@ namespace BotevBotApp.AudioModule.Requests.Tests
 
             Uri requestUri = new(request);
 
-            YoutubeAudioRequest ytRequest = new(requestUri, requester);
+            var mockLogger = new Moq.Mock<ILogger<YoutubeAudioRequest>>();
+
+            YoutubeAudioRequest ytRequest = new(requestUri, requester, mockLogger.Object);
 
             // Act
             var audioItemDto = await ytRequest.ToAudioItemAsync();
@@ -39,7 +42,9 @@ namespace BotevBotApp.AudioModule.Requests.Tests
             string request = "https://www.youtube.com/watch?v=d1YBv2mWll0";
             Uri requestUri = new(request);
 
-            YoutubeAudioRequest ytRequest = new(requestUri, requester);
+            var mockLogger = new Moq.Mock<ILogger<YoutubeAudioRequest>>();
+
+            YoutubeAudioRequest ytRequest = new(requestUri, requester, mockLogger.Object);
 
             // Act
             var playback = await ytRequest.GetAudioPlaybackAsync();

@@ -1,5 +1,6 @@
 ﻿using BotevBotApp.AudioModule.DTO;
 using BotevBotApp.AudioModule.Playback;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,10 +12,16 @@ namespace BotevBotApp.AudioModule.Requests
         /// Gets the name of the requester.
         /// </summary>
         public string Requester { get; private init; }
+        
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        protected ILogger<AudioRequest> Logger { get; private init; }
 
-        public AudioRequest(string requester)
+        public AudioRequest(string requester, ILogger<AudioRequest> logger)
         {
             Requester = requester;
+            Logger = logger;
         }
 
         /// <summary>
@@ -32,6 +39,7 @@ namespace BotevBotApp.AudioModule.Requests
         /// <returns>A task representing the fetching operation.</returns>
         public async Task<AudioPlayback> GetAudioPlaybackAsync(bool cachePlayback, CancellationToken cancellationToken = default)
         {
+            Logger.LogDebug($"Getting audio playback{(cachePlayback ? " with cache" : "")}.");
             var playback = await GetAudioPlaybackAsync(cancellationToken).ConfigureAwait(false);
             return cachePlayback ? playback.WithCache() : playback;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace BotevBotApp.AudioModule.Requests
 {
@@ -9,7 +10,7 @@ namespace BotevBotApp.AudioModule.Requests
     {
         protected Uri Url { get; private set; }
 
-        protected RemoteAudioRequest(Uri url, string requester) : base(requester)
+        protected RemoteAudioRequest(Uri url, string requester, ILogger<RemoteAudioRequest> logger) : base(requester, logger)
         {
             if (!ValidateUrl(url))
                 throw new InvalidUrlException($"The provided url: {url} is invalid.");
@@ -23,6 +24,7 @@ namespace BotevBotApp.AudioModule.Requests
         /// <returns>True if the url is valid, false otherwise.</returns>
         protected virtual bool ValidateUrl(Uri url)
         {
+            Logger.LogTrace($"Validating url: {url}");
             return true;
         }
     }

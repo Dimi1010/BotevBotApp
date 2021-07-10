@@ -72,6 +72,10 @@ namespace BotevBotApp.AudioModule.Playback
             cachedStream = new MemoryStream();
             await innerStream.CopyToAsync(cachedStream, CancellationToken.None).ConfigureAwait(false);
             Cached = true;
+            
+            // Disposes of inner playback as its already cached.
+            await innerPlayback.DisposeAsync().ConfigureAwait(false);
+            
             return await GetCacheCopyAsync(cancellationToken);
         }
 

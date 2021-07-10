@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Playback
 {
+    /// <summary>
+    /// An audio client worker that plays audio requests.
+    /// </summary>
     internal sealed class AudioClientWorker : IDisposable, IAudioClientWorker
     {
         /// <inheritdoc/>
@@ -85,6 +88,12 @@ namespace BotevBotApp.AudioModule.Playback
         }
         private event EventHandler<SkipSongRequestEventArgs> SkipSongRequest;
 
+        /// <summary>
+        /// Constructs a basic audio client worker that plays audio from requests.
+        /// </summary>
+        /// <param name="workerId">The id assosiated with the worker.</param>
+        /// <param name="discordAudioClient">The <see cref="IAudioClient"/> to which the audio is sent.</param>
+        /// <param name="logger">A logger instance.</param>
         public AudioClientWorker(ulong workerId, IAudioClient discordAudioClient, ILogger<AudioClientWorker> logger)
         {
             WorkerId = workerId;

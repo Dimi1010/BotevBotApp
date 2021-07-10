@@ -16,6 +16,9 @@ namespace BotevBotApp.AudioModule
 
             // TODO: Add request parsers here.
             services.AddTransient<IRequestParser, YoutubeRequestParser>();
+#if DEBUG
+            services.AddTransient<IRequestParser, DebugRequestParser>();
+#endif
 
             // TODO: Maybe make this transient?
             services.AddSingleton<IRequestParserService, RequestParserService>();

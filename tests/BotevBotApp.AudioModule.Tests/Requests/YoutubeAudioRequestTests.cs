@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Xunit;
-using BotevBotApp.AudioModule.Requests;
 
-namespace BotevBotApp.AudioModuleTests.Requests
+namespace BotevBotApp.AudioModule.Requests.Tests
 {
     public class YoutubeAudioRequestTests
     {
@@ -20,7 +19,7 @@ namespace BotevBotApp.AudioModuleTests.Requests
 
             Uri requestUri = new(request);
 
-            YoutubeAudioRequest ytRequest = new(requester, requestUri);
+            YoutubeAudioRequest ytRequest = new(requestUri, requester);
 
             // Act
             var audioItemDto = await ytRequest.ToAudioItemAsync();
@@ -40,7 +39,7 @@ namespace BotevBotApp.AudioModuleTests.Requests
             string request = "https://www.youtube.com/watch?v=d1YBv2mWll0";
             Uri requestUri = new(request);
 
-            YoutubeAudioRequest ytRequest = new(requester, requestUri);
+            YoutubeAudioRequest ytRequest = new(requestUri, requester);
 
             // Act
             var playback = await ytRequest.GetAudioPlaybackAsync();

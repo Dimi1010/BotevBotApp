@@ -34,6 +34,7 @@ namespace BotevBotApp.AudioModule.Playback
                 .OutputToPipe(new StreamPipeSink(outputStream), options.OutputArgumentOptions)
                 .ProcessAsynchronously()
                 .ConfigureAwait(false);
+            outputStream.Position = 0;
             return outputStream;
         }
 
@@ -71,6 +72,7 @@ namespace BotevBotApp.AudioModule.Playback
                     .DisableChannel(FFMpegCore.Enums.Channel.Video)
                     .WithAudioSamplingRate(48000)
                     .WithCustomArgument("-ac 2")
+                    .WithAudioCodec("pcm_s16le")
                     .ForceFormat("s16le");
             }
         }

@@ -52,6 +52,7 @@ namespace BotevBotApp.AudioModule.Playback
             cancellationToken.ThrowIfCancellationRequested();
             var outputStream = new MemoryStream(cachedStream.Capacity);
             cachedStream.WriteTo(outputStream);
+            outputStream.Position = 0;
             return Task.FromResult<Stream>(outputStream);
         }
 

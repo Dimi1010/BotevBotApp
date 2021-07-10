@@ -79,7 +79,7 @@ namespace BotevBotApp.AudioModule.Services
             logger.LogTrace($"Parsing request for channel {voiceChannel.Id}");
             var request = await requestParser.ParseRequestAsync(requestDto, cancellationToken).ConfigureAwait(false);
 
-            logger.LogTrace($"Enqueueing parsed request for channe; {voiceChannel.Id}");
+            logger.LogTrace($"Enqueueing parsed request for channel {voiceChannel.Id}");
             await client.EnqueueAsync(request, cancellationToken).ConfigureAwait(false);
 
             return AudioServiceResult.Success;

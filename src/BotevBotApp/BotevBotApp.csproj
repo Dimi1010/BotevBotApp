@@ -13,4 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\BotevBotApp.Shared\BotevBotApp.Shared.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="data\" />
+  </ItemGroup>
 </Project>

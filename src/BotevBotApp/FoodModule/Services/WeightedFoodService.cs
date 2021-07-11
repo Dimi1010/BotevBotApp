@@ -21,9 +21,9 @@ namespace BotevBotApp.FoodModule.Services
         private Task loadingTask = null;
         private bool loaded = false;
 
-        public WeightedFoodService(IOptionsSnapshot<FoodServiceOptions> options)
+        public WeightedFoodService(IOptionsMonitor<FoodServiceOptions> options)
         {
-            this.options = options.Value;
+            this.options = options.CurrentValue;
         }
 
         /// <inheritdoc/>

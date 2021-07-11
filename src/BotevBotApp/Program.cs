@@ -46,10 +46,11 @@ namespace BotevBotApp
                                 // Adds the core module information.
                                 services.AddTransient<IModuleInfo, CoreModuleInfo>();
 
-                                services.AddFoodModule();
 
                                 services.AddSingleton<ICommandHandler, CommandHandler>();
+                                
                                 // Add modules here.
+                                services.AddFoodModule();
                                 services.AddAudioModule();
 
                                 services.AddHostedService<DiscordWorker>();

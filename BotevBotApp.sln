@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1BDD2488
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotevBotApp.Shared", "src\BotevBotApp.Shared\BotevBotApp.Shared.csproj", "{A1362BCD-5DF7-435B-820E-7DDA24986F08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotevBotApp.Test", "tests\BotevBotApp.Test\BotevBotApp.Test.csproj", "{5191FD6A-65C3-4D92-BFA8-3C720199A6DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1362BCD-5DF7-435B-820E-7DDA24986F08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5191FD6A-65C3-4D92-BFA8-3C720199A6DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5191FD6A-65C3-4D92-BFA8-3C720199A6DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5191FD6A-65C3-4D92-BFA8-3C720199A6DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5191FD6A-65C3-4D92-BFA8-3C720199A6DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{866947B9-3138-4DC8-B4FF-4A0ED9836A82} = {80AAC7C5-5DE9-4C56-9163-FBF70DD7ADB0}
 		{A1362BCD-5DF7-435B-820E-7DDA24986F08} = {80AAC7C5-5DE9-4C56-9163-FBF70DD7ADB0}
+		{5191FD6A-65C3-4D92-BFA8-3C720199A6DD} = {1BDD2488-0FA6-4011-9A0E-6E6CCC9B3EA0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D0C9175-B60B-4229-8A52-BA3D10CF0CF9}

@@ -1,3 +1,4 @@
+using BotevBotApp.Extensions;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Hosting;

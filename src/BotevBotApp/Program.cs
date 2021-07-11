@@ -1,3 +1,5 @@
+using BotevBotApp.Extensions;
+using BotevBotApp.FoodModule;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +44,8 @@ namespace BotevBotApp
 
                                 // Adds the core module information.
                                 services.AddTransient<IModuleInfo, CoreModuleInfo>();
+
+                                services.AddFoodModule();
 
                                 services.AddSingleton<ICommandHandler, CommandHandler>();
                                 services.AddHostedService<DiscordWorker>();

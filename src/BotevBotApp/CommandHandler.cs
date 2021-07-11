@@ -118,7 +118,7 @@ namespace BotevBotApp
             // The command is unspecified, indicating search failure.
             if (!command.IsSpecified)
             {
-                logger.LogTrace($"Unspecified command: {command.Value?.Name}");
+                logger.LogTrace($"Unspecified command: {context.Message}");
                 return Task.CompletedTask;
             }
 

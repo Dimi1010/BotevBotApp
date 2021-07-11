@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BotevBotApp.AudioModule
 {
-    public static class ServiceCollectionExtensions
+    public static class ModuleSetup
     {
         public static IServiceCollection AddAudioModule(this IServiceCollection services)
         {

@@ -23,26 +23,26 @@ namespace BotevBotApp.AudioModule.Playback
         /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="CachedAudioPlayback"/>.
         /// </summary>
         /// <returns>A new <see cref="CachedAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual CachedAudioPlayback WithCache() => new CachedAudioPlayback(this);
+        public virtual AudioPlayback WithCache() => new CachedAudioPlayback(this);
 
         /// <summary>
         /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="PreloadedAudioPlayback"/>.
         /// </summary>
         /// <returns>A new <see cref="PreloadedAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual PreloadedAudioPlayback WithPreloading() => new PreloadedAudioPlayback(this);
+        public virtual AudioPlayback WithPreloading() => new PreloadedAudioPlayback(this);
 
         /// <summary>
         /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="TranscodingAudioPlayback"/> with default options.
         /// </summary>
         /// <returns>A new <see cref="TranscodingAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual TranscodingAudioPlayback WithTranscoding() => WithTranscoding(TranscodingAudioPlaybackOptions.Default);
+        public virtual AudioPlayback WithTranscoding() => WithTranscoding(TranscodingAudioPlaybackOptions.Default);
 
         /// <summary>
         /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="TranscodingAudioPlayback"/>.
         /// </summary>
         /// <param name="options">Options with which to construct <see cref="TranscodingAudioPlayback"/>.</param>
         /// <returns>A new <see cref="TranscodingAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual TranscodingAudioPlayback WithTranscoding(TranscodingAudioPlaybackOptions options) => new TranscodingAudioPlayback(this, options);
+        public virtual AudioPlayback WithTranscoding(TranscodingAudioPlaybackOptions options) => new TranscodingAudioPlayback(this, options);
 
         /// <summary>
         /// Helper method to throw <see cref="ObjectDisposedException"/> if the object has been already disposed.

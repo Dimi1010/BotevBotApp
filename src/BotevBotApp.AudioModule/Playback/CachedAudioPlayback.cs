@@ -8,7 +8,7 @@ namespace BotevBotApp.AudioModule.Playback
     /// <summary>
     /// Wrapper over an <see cref="AudioPlayback"/> that caches the playback <see cref="Stream"/> into a <see cref="MemoryStream"/>.
     /// </summary>
-    public class CachedAudioPlayback : AudioPlayback
+    internal class CachedAudioPlayback : AudioPlayback
     {
         private readonly AudioPlayback innerPlayback;
         private readonly object cachingLock = new();

@@ -10,7 +10,7 @@ namespace BotevBotApp.AudioModule.Playback
     /// <summary>
     /// Audio playback that gets decoded using FFMpeg.
     /// </summary>
-    public class TranscodingAudioPlayback : AudioPlayback
+    internal class TranscodingAudioPlayback : AudioPlayback
     {
         private readonly AudioPlayback innerPlayback;
         private readonly TranscodingAudioPlaybackOptions options;

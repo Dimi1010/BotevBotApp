@@ -1,6 +1,6 @@
 ﻿namespace BotevBotApp.AudioModule.Playback
 {
-    public class PreloadedAudioPlayback : CachedAudioPlayback
+    internal class PreloadedAudioPlayback : CachedAudioPlayback
     {
         public PreloadedAudioPlayback(AudioPlayback innerPlayback) : base(innerPlayback)
         {

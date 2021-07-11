@@ -40,7 +40,7 @@ namespace BotevBotApp.AudioModule.Requests
             {
                 var audioStream = await bestAudioCandidate.StreamAsync().ConfigureAwait(false);
 
-                var decodingOptions = DecodingAudioPlaybackOptions.Default;
+                var decodingOptions = TranscodingAudioPlaybackOptions.Default;
 
                 decodingOptions.InputArgumentsOptions = options =>
                 {
@@ -49,7 +49,7 @@ namespace BotevBotApp.AudioModule.Requests
                 };
 
                 return new StreamSourceAudioPlayback(audioStream)
-                    .WithDecoding(decodingOptions)
+                    .WithTranscoding(decodingOptions)
                     .WithCache();
             }
             else

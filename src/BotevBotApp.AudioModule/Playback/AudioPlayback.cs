@@ -32,17 +32,17 @@ namespace BotevBotApp.AudioModule.Playback
         public virtual PreloadedAudioPlayback WithPreloading() => new PreloadedAudioPlayback(this);
 
         /// <summary>
-        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="DecodingAudioPlayback"/> with default options.
+        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="TranscodingAudioPlayback"/> with default options.
         /// </summary>
-        /// <returns>A new <see cref="DecodingAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual DecodingAudioPlayback WithDecoding() => WithDecoding(DecodingAudioPlaybackOptions.Default);
+        /// <returns>A new <see cref="TranscodingAudioPlayback"/> instance made from the current instance.</returns>
+        public virtual TranscodingAudioPlayback WithTranscoding() => WithTranscoding(TranscodingAudioPlaybackOptions.Default);
 
         /// <summary>
-        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="DecodingAudioPlayback"/>.
+        /// Wraps the current <see cref="AudioPlayback"/> instance into <see cref="TranscodingAudioPlayback"/>.
         /// </summary>
-        /// <param name="options">Options with which to construct <see cref="DecodingAudioPlayback"/>.</param>
-        /// <returns>A new <see cref="DecodingAudioPlayback"/> instance made from the current instance.</returns>
-        public virtual DecodingAudioPlayback WithDecoding(DecodingAudioPlaybackOptions options) => new DecodingAudioPlayback(this, options);
+        /// <param name="options">Options with which to construct <see cref="TranscodingAudioPlayback"/>.</param>
+        /// <returns>A new <see cref="TranscodingAudioPlayback"/> instance made from the current instance.</returns>
+        public virtual TranscodingAudioPlayback WithTranscoding(TranscodingAudioPlaybackOptions options) => new TranscodingAudioPlayback(this, options);
 
         /// <summary>
         /// Helper method to throw <see cref="ObjectDisposedException"/> if the object has been already disposed.

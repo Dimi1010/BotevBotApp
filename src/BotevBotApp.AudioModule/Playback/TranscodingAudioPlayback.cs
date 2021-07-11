@@ -10,14 +10,14 @@ namespace BotevBotApp.AudioModule.Playback
     /// <summary>
     /// Audio playback that gets decoded using FFMpeg.
     /// </summary>
-    public class DecodingAudioPlayback : AudioPlayback
+    public class TranscodingAudioPlayback : AudioPlayback
     {
         private readonly AudioPlayback innerPlayback;
-        private readonly DecodingAudioPlaybackOptions options;
+        private readonly TranscodingAudioPlaybackOptions options;
 
-        public DecodingAudioPlayback(AudioPlayback innerPlayback) : this(innerPlayback, DecodingAudioPlaybackOptions.Default) { }
+        public TranscodingAudioPlayback(AudioPlayback innerPlayback) : this(innerPlayback, TranscodingAudioPlaybackOptions.Default) { }
 
-        public DecodingAudioPlayback(AudioPlayback innerPlayback, DecodingAudioPlaybackOptions options)
+        public TranscodingAudioPlayback(AudioPlayback innerPlayback, TranscodingAudioPlaybackOptions options)
         {
             this.innerPlayback = innerPlayback;
             this.options = options;
@@ -60,9 +60,9 @@ namespace BotevBotApp.AudioModule.Playback
         }
     }
 
-    public class DecodingAudioPlaybackOptions
+    public class TranscodingAudioPlaybackOptions
     {
-        public static DecodingAudioPlaybackOptions Default => new DecodingAudioPlaybackOptions();
+        public static TranscodingAudioPlaybackOptions Default => new TranscodingAudioPlaybackOptions();
 
         public static Action<FFMpegArgumentOptions> DefaultOutputArgumentOptions
         {

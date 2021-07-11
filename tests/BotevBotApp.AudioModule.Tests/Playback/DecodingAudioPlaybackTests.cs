@@ -26,7 +26,7 @@ namespace BotevBotApp.AudioModule.Playback.Tests
             var mockInnerPlayback = new Moq.Mock<AudioPlayback>();
             mockInnerPlayback.Setup(ap => ap.GetAudioStreamAsync(default)).Returns(Task.FromResult<Stream>(new MemoryStream(mockData, false)));
 
-            var decodingPlayback = new DecodingAudioPlayback(mockInnerPlayback.Object);
+            var decodingPlayback = new TranscodingAudioPlayback(mockInnerPlayback.Object);
 
             // Act
             using var decodedStream = await decodingPlayback.GetAudioStreamAsync().ConfigureAwait(false);

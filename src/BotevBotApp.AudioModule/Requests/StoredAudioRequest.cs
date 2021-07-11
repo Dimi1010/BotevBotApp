@@ -22,7 +22,7 @@ namespace BotevBotApp.AudioModule.Requests
         {
             Logger.LogDebug($"Getting audio playback with id {fileId}.");
             var result = await storageProvider.GetFileDataAsync(fileId, cancellationToken).ConfigureAwait(false);
-            return new StreamSourceAudioPlayback(result).WithDecoding();
+            return new StreamSourceAudioPlayback(result).WithTranscoding();
         }
 
         public override async Task<AudioItemDTO> ToAudioItemAsync(CancellationToken cancellationToken = default)

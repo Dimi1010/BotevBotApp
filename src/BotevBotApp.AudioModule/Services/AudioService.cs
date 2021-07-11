@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Services
 {
-    public class AudioService : IAudioService
+    internal class AudioService : IAudioService
     {
         private readonly ILogger<AudioService> logger;
         private readonly IRequestParserService requestParser;

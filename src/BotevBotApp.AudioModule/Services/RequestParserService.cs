@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BotevBotApp.AudioModule.Services
 {
-    public class RequestParserService : IRequestParserService
+    internal class RequestParserService : IRequestParserService
     {
         private readonly IEnumerable<IRequestParser> requestParsers;
 

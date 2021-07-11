@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace BotevBotApp
+namespace BotevBotApp.Extensions
 {
     public static class LogLevelConversions
     {

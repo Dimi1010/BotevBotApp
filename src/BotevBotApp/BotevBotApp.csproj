@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BotevBotApp.Shared\BotevBotApp.Shared.csproj" />
+    <ProjectReference Include="..\BotevBotApp.AudioModule\BotevBotApp.AudioModule.csproj" />
   </ItemGroup>
 </Project>

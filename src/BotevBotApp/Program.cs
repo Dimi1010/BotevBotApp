@@ -1,5 +1,6 @@
 using BotevBotApp.Extensions;
 using BotevBotApp.FoodModule;
+using BotevBotApp.AudioModule;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,9 @@ namespace BotevBotApp
                                 services.AddFoodModule();
 
                                 services.AddSingleton<ICommandHandler, CommandHandler>();
+                                // Add modules here.
+                                services.AddAudioModule();
+
                                 services.AddHostedService<DiscordWorker>();
                             });
         }
